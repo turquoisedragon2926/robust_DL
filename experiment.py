@@ -67,7 +67,7 @@ def adaptive_loss(model,x_natural,y,noise_model, severity=0.05):
     # loss_normal = F.cross_entropy(logits , y)
     return loss_noisy
 
-def adaptive_loss_v2(model,x_natural,y,noise_model, severity=0.05, w_noise=0.5):
+def adaptive_loss_v2(model,x_natural,y,noise_model, severity=0.05, w_noise=0.2):
     logits = model(x_natural)
     p = torch.nn.functional.softmax(logits, dim=1)
 
@@ -80,7 +80,7 @@ def adaptive_loss_v2(model,x_natural,y,noise_model, severity=0.05, w_noise=0.5):
     loss_noisy = log_prob_drichlet(p,noise_weight*y_one_hot+1).mean()
 
     loss_normal = F.cross_entropy(logits , y)
-    return (1-w)*loss_normal+w_noise*loss_noisy
+    return (1-w_noise)*loss_normal+w_noise*loss_noisy
 
 class Data:
   def __init__(self, train_loader, valid_loader, test_loader, attack_loader):
@@ -139,7 +139,7 @@ def general_trades_loss_fn(beta=6.0, epsilon=0.3, step_size=0.007, num_steps=10)
 
 def general_adaptive_loss_fn(noise_model, severity=0.05):
   def adaptive_loss_fn(model, data, target, optimizer):
-    return adaptive_loss(model,data,target, noise_model, severity=severity)
+    return adaptive_loss_v2(model, data, target, noise_model, severity=severity)
 
   return adaptive_loss_fn
 
