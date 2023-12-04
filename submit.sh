@@ -5,6 +5,7 @@ if [[ "$1" == "test" ]]; then
     noises=("${test_noises[@]}")
 elif [[ "$1" == "full" ]]; then
     noises=("${full_noises[@]}")
+fi
 
 for noise in "${noises[@]}"
 do
