@@ -9,5 +9,5 @@ fi
 
 for noise in "${noises[@]}"
 do
-    bash experiment.sh "trades" "$noise" 0.5 50
+    bash experiment.sh "eval" "trades" "$noise" 2 10 "CIFARC10:ALEXNET:TRADES_LOSS:BETA=0.5.pt"
 done

@@ -280,17 +280,21 @@ def train(model, data, optimizer, loss, config, epochs, eval_interval, device):
   return total_loss
 
 def main():
-    if not len(sys.argv) == 5:
-        print("Usage: python3 experiment.py args: [losstype (trades/custom), noisetype, hyperparam (alpha/severity), epochs]")
+    if len(sys.argv) < 6 or len(sys.argv) > 7:
+        print("Usage: python3 experiment.py args: [modetype (eval/train), losstype (trades/custom), noisetype, hyperparam (alpha/severity), epochs, model_checkpoint_path]")
         sys.exit(1)
 
     # Access and print the command-line arguments
     print("Total number of arguments:", len(sys.argv))
 
-    loss_type = sys.argv[1]
-    noisetype = sys.argv[2]
-    hyperparam = float(sys.argv[3])
-    epochs = int(sys.argv[4])
+    modetype = sys.argv[1]
+    losstype = sys.argv[2]
+    noisetype = sys.argv[3]
+    hyperparam = float(sys.argv[4])
+    epochs = int(sys.argv[5])
+    model_checkpoint = None
+    if len(sys.argv) > 6:
+        model_checkpoint = sys.argv[6]
 
     valid_size=0.2
     eval_interval=10
@@ -336,48 +340,54 @@ def main():
     alexnet = AlexNet().to(device)
     noise_model = nn.Sequential(nn.Linear(1,1, bias=True),nn.Sigmoid()).to(device)
 
-    # model_pt = os.path.join("weights", f'CIFARC10:ALEXNET:TRADES_LOSS:BETA={beta}_ep=0.pt')
-    # model.load_state_dict(torch.load(model_pt))
-    # Load optimizer too if needed
+    if model_checkpoint is not None:
+        model_pt = os.path.join("weights", model_checkpoint)
+        alexnet.load_state_dict(torch.load(model_pt))
+        # Load optimizer too if needed
 
     optimizer = optim.SGD(list(alexnet.parameters()) + list(noise_model.parameters()), lr=0.01, momentum=0.9)
 
-    if loss_type == 'trades':
+    if losstype == 'trades':
         beta = 1 / hyperparam
         id = f'CIFARC10:Alexnet:TRADES_LOSS:BETA={beta}'
         trades_loss_beta = Loss(general_trades_loss_fn(beta=beta), id)
-        configuration = Configuration(cifar10_c_data, alexnet, optimizer, trades_loss_beta, identity_attack, id=trades_loss_beta.id)
-    elif loss_type == 'ce':
+        configuration = Configuration(cifar10_c_data, alexnet, optimizer, trades_loss_beta, identity_attack, id=trades_loss_beta.id + f":EVAL_NOISE={noisetype}")
+    elif losstype == 'ce':
         id = f'CIFARC10:Alexnet:CE_LOSS'
         ce_loss = Loss(ce_loss_fn, id)
-        configuration = Configuration(cifar10_c_data, alexnet, optimizer, ce_loss, identity_attack, id=ce_loss.id)
-    elif loss_type == 'custom':
+        configuration = Configuration(cifar10_c_data, alexnet, optimizer, ce_loss, identity_attack, id=ce_loss.id + f":EVAL_NOISE={noisetype}")
+    elif losstype == 'custom':
         id = f'CIFARC10:Alexnet:CUSTOM_LOSS:SEVERITY={hyperparam}'
         adaptive_loss_severity=Loss(general_adaptive_loss_fn(noise_model, hyperparam), id)
-        configuration = Configuration(cifar10_c_data, alexnet, optimizer, adaptive_loss_severity, identity_attack, id=adaptive_loss_severity.id)
+        configuration = Configuration(cifar10_c_data, alexnet, optimizer, adaptive_loss_severity, identity_attack, id=adaptive_loss_severity.id + f":EVAL_NOISE={noisetype}")
     else:
        print("Loss Type not supported")
        sys.exit(1)
 
     data, model, optimizer, loss, attack = configuration.getConfig()
 
-    current_loss = train(model, data, optimizer, loss, configuration, epochs, eval_interval, device)
+    if modetype == "train":   
+        current_loss = train(model, data, optimizer, loss, configuration, epochs, eval_interval, device)
+
+        with open('results/final_loss.json', 'r') as fp:
+            final_loss = json.load(fp)
+
+        final_loss[configuration.getId()] = current_loss
+
+        with open('results/final_loss.json', 'w') as fp:
+            json.dump(final_loss, fp)
+
     current_accuracy = accuracy(model, data.test_loader, device)
     current_robust_accuracy = robust_accuracy(model, attack, data.attack_loader, device)
-
-    with open('results/final_loss.json', 'r') as fp:
-        final_loss = json.load(fp)
+    
     with open('results/natural_accuracy.json', 'r') as fp:
         natural_accuracy = json.load(fp)
     with open('results/robustness_accuracy.json', 'r') as fp:
         robustness_accuracy = json.load(fp)
 
-    final_loss[configuration.getId()] = current_loss
     natural_accuracy[configuration.getId()] = current_accuracy
     robustness_accuracy[configuration.getId()] = current_robust_accuracy
 
-    with open('results/final_loss.json', 'w') as fp:
-        json.dump(final_loss, fp)
     with open('results/natural_accuracy.json', 'w') as fp:
         json.dump(natural_accuracy, fp)
     with open('results/robustness_accuracy.json', 'w') as fp:

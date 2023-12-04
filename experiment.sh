@@ -8,10 +8,10 @@ sbatch <<EOT
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-task=1
 #SBATCH --qos=regular
-#SBATCH --job-name losstype=${1}_noisetype=${2}_hyperparam=${3}_epochs=${4}
+#SBATCH --job-name modetype=${1}_losstype=${2}_noisetype=${3}_hyperparam=${4}_epochs=${5}
 #SBATCH --mail-user=richardr2926@gmail.com
 #SBATCH --mail-type=ALL
-#SBATCH --time=01:00:00
+#SBATCH --time=00:10:00
 #SBATCH --account=m3863_g
 #SBATCH --gpu-bind=none
 
@@ -21,7 +21,8 @@ export LD_PRELOAD=/opt/cray/pe/lib64/libmpi_gtl_cuda.so.0
 
 module load conda
 conda activate robust_DL
-srun --export=ALL python3 experiment.py $1 $2 $3 $4
+module load pytorch/2.0.1
+srun --export=ALL python3 experiment.py $1 $2 $3 $4 $5 $6
 
 exit 0
 EOT
