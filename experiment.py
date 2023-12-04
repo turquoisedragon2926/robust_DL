@@ -281,7 +281,7 @@ def train(model, data, optimizer, loss, config, epochs, eval_interval, device):
 
 def main():
     if not len(sys.argv) == 4:
-        print("Usage: python3 experiment.py args: [loss_type (trades/custom), noisetype, hyperparam (alpha/severity), epochs]")
+        print("Usage: python3 experiment.py args: [losstype (trades/custom), noisetype, hyperparam (alpha/severity), epochs]")
         sys.exit(1)
 
     # Access and print the command-line arguments
@@ -293,7 +293,7 @@ def main():
     epochs = sys.argv[4]
 
     valid_size=0.2
-    eval_interval=1
+    eval_interval=10
 
     transform_train = transforms.Compose([
     transforms.RandomCrop(32, padding=4),
