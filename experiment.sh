@@ -19,6 +19,8 @@ export SLURM_CPU_BIND="cores"
 export PATH=$PATH:$HOME/.julia/bin
 export LD_PRELOAD=/opt/cray/pe/lib64/libmpi_gtl_cuda.so.0
 
+module load conda
+conda activate robust_DL
 srun --export=ALL python3 experiment.py $1 $2 $3 $4
 
 exit 0

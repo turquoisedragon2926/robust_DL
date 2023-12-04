@@ -280,7 +280,7 @@ def train(model, data, optimizer, loss, config, epochs, eval_interval, device):
   return total_loss
 
 def main():
-    if not len(sys.argv) == 4:
+    if not len(sys.argv) == 5:
         print("Usage: python3 experiment.py args: [losstype (trades/custom), noisetype, hyperparam (alpha/severity), epochs]")
         sys.exit(1)
 
@@ -289,8 +289,8 @@ def main():
 
     loss_type = sys.argv[1]
     noisetype = sys.argv[2]
-    hyperparam = sys.argv[3]
-    epochs = sys.argv[4]
+    hyperparam = float(sys.argv[3])
+    epochs = int(sys.argv[4])
 
     valid_size=0.2
     eval_interval=10
