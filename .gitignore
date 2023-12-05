@@ -2,3 +2,5 @@ TRADES/
 *.tar
 *.pt
 plots/
+weights/
+optimizers/
