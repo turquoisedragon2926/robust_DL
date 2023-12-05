@@ -33,6 +33,8 @@ from torch.autograd import Variable
 import torch.optim as optim
 from torch import linalg
 import sys
+import argparse
+import time
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -41,45 +43,32 @@ def log_prob_drichlet(x,theta):
     return D.log_prob(x)
 
 def gaussian_noise_layer(data, severity=0.05):
-    # c = [0.04, 0.06, .08, .09, .10][severity - 1]
-    noise = torch.randn(data.size())* severity#.to(device)
-
+    noise = torch.randn(data.size()) * severity
     noise =torch.Tensor(noise).to(device)
-    # noise = noise*data.mean()
-    # noisy_data = torch.clip(data + noise)
+
     noisy_data = data+noise
-    # noise = noisy_data - data
-    noise_norm = linalg.vector_norm(noise, dim = (1,2,3)).reshape((-1,1))  # improve this line of code later
+    noise_norm = linalg.vector_norm(noise, dim = (1,2,3)).reshape((-1,1)) # improve this line of code later
     return noisy_data, noise_norm
 
-def adaptive_loss(model,x_natural,y,noise_model, severity=0.05):
+def norm_clamp(logit, tau1, tau2):
+    logit_norm = linalg.vector_norm(logit, dim=1, keepdim=True)
+    scale = torch.clamp(logit_norm, min=tau2, max=tau1) / logit_norm
+    return logit * scale
+
+def adaptive_loss(model, x_natural, y, noise_model, severity, w_noise, tau1, tau2):
     logits = model(x_natural)
+    logits = norm_clamp(logits, tau1, tau2)
+
     p = torch.nn.functional.softmax(logits, dim=1)
 
-    noisy_data, noise_norm = gaussian_noise_layer(x_natural)
-    noise_weight = noise_model(noise_norm)#torch.div(noise_model(noise_norm), noise_model(torch.zeros_like(noise_norm)))
+    _, noise_norm = gaussian_noise_layer(x_natural, severity)
+    noise_weight = noise_model(noise_norm)
     y_one_hot = torch.zeros_like(logits)
     y_one_hot[:,y]=1
 
-    # loss_noisy = log_prob_dirichlet(logits, noise_weight)
     loss_noisy = log_prob_drichlet(p,noise_weight*y_one_hot+1).mean()
-
-    # loss_normal = F.cross_entropy(logits , y)
-    return loss_noisy
-
-def adaptive_loss_v2(model,x_natural,y,noise_model, severity=0.05, w_noise=0.2):
-    logits = model(x_natural)
-    p = torch.nn.functional.softmax(logits, dim=1)
-
-    noisy_data, noise_norm = gaussian_noise_layer(x_natural)
-    noise_weight = noise_model(noise_norm)#torch.div(noise_model(noise_norm), noise_model(torch.zeros_like(noise_norm)))
-    y_one_hot = torch.zeros_like(logits)
-    y_one_hot[:,y]=1
-
-    # loss_noisy = log_prob_dirichlet(logits, noise_weight)
-    loss_noisy = log_prob_drichlet(p,noise_weight*y_one_hot+1).mean()
-
     loss_normal = F.cross_entropy(logits , y)
+
     return (1-w_noise)*loss_normal+w_noise*loss_noisy
 
 class Data:
@@ -137,9 +126,9 @@ def general_trades_loss_fn(beta=6.0, epsilon=0.3, step_size=0.007, num_steps=10)
                       epsilon=epsilon, perturb_steps=num_steps, beta=beta, distance='l_inf')
   return trades_loss_fn
 
-def general_adaptive_loss_fn(noise_model, severity=0.05):
+def general_adaptive_loss_fn(noise_model, severity, w_noise, tau1, tau2):
   def adaptive_loss_fn(model, data, target, optimizer):
-    return adaptive_loss_v2(model, data, target, noise_model, severity=severity)
+    return adaptive_loss(model, data, target, noise_model, severity=severity, w_noise=w_noise, tau1=tau1, tau2=tau2)
 
   return adaptive_loss_fn
 
@@ -184,14 +173,14 @@ def robust_accuracy(model, attack, data_loader, device):
 
 def save_epoch_losses(loss_id, epoch_losses):
     os.makedirs('epoch_losses', exist_ok=True)
-    file_path = os.path.join('epoch_losses', f'{loss_id}_EPOCHS={len(epoch_losses)}.txt')
+    file_path = os.path.join('epoch_losses', f'{loss_id}.txt')
     with open(file_path, 'w') as file:
         for loss in epoch_losses:
             file.write(f'{loss}\n')
 
 def save_epoch_accuracies(loss_id, epoch_accuracies):
     os.makedirs('epoch_accuracies', exist_ok=True)
-    file_path = os.path.join('epoch_accuracies', f'{loss_id}_EPOCHS={len(epoch_accuracies)}.txt')
+    file_path = os.path.join('epoch_accuracies', f'{loss_id}.txt')
     with open(file_path, 'w') as file:
         for loss in epoch_accuracies:
             file.write(f'{loss}\n')
@@ -233,8 +222,8 @@ def train(model, data, optimizer, loss, config, epochs, eval_interval, device):
       if (eval_acc > best_eval_acc):  # best so far so save checkpoint to restore later
         best_eval_acc = eval_acc
         patience_count = 0
-        torch.save(model.state_dict(), os.path.join("weights", loss.id + f"_EPOCHS={epoch}.pt"))
-        torch.save(optimizer.state_dict(), os.path.join("optimizers", loss.id + f"_EPOCHS={epoch}.tar"))
+        torch.save(model.state_dict(), os.path.join("weights", loss.id))
+        torch.save(optimizer.state_dict(), os.path.join("optimizers", loss.id))
       else:
           patience_count += 1
 
@@ -270,7 +259,7 @@ def train(model, data, optimizer, loss, config, epochs, eval_interval, device):
     # Save the plots
     if not os.path.exists('plots'):
         os.makedirs('plots')
-    plt.savefig(os.path.join('plots', loss.id + f'_EPOCHS={epoch}_training_validation_plot.png'))
+    plt.savefig(os.path.join('plots', loss.id + f'_training_validation_plot.png'))
     plt.close()
 
     if patience_count >= patience:
@@ -279,25 +268,26 @@ def train(model, data, optimizer, loss, config, epochs, eval_interval, device):
 
   return total_loss
 
-def main():
-    if len(sys.argv) < 6 or len(sys.argv) > 7:
-        print("Usage: python3 experiment.py args: [modetype (eval/train), losstype (trades/custom), noisetype, hyperparam (alpha/severity), epochs, model_checkpoint_path]")
-        sys.exit(1)
+def main(temp):
+    parser = argparse.ArgumentParser(description='Command line arguments for experiment script.')
 
-    # Access and print the command-line arguments
-    print("Total number of arguments:", len(sys.argv))
+    parser.add_argument('modetype', type=str, default="train", choices=['eval', 'train'], help='Mode type: eval or train')
+    parser.add_argument('losstype', type=str, default="custom", choices=['trades', 'custom', 'ce'], help='Loss type: trades or custom or ce')
+    parser.add_argument('noisetype', type=str, default='gaussian_noise.npy', help='Type of noise (default: gaussian_noise.npy)')
+    parser.add_argument('alpha', type=float, default=2.0, help='Alpha value (default: 2)')
+    parser.add_argument('severity', type=float, default=0.05, help='severity value (default: 0.05)')
+    parser.add_argument('w_noise', type=float, default=0.1, help='weightage of our noise value (default: 0.1)')
+    parser.add_argument('tau1', type=int, default=10, help='Tau1 for norm clipping (default: 10)')
+    parser.add_argument('tau2', type=int, default=-10, help='Tau2 for norm clipping (default: -10)')
+    parser.add_argument('epochs', type=int, default=10, help='Number of epochs (default: 25)')
+    parser.add_argument('model_checkpoint', type=str, nargs='?', default=None, help='Path to model checkpoint (optional)')
 
-    modetype = sys.argv[1]
-    losstype = sys.argv[2]
-    noisetype = sys.argv[3]
-    hyperparam = float(sys.argv[4])
-    epochs = int(sys.argv[5])
-    model_checkpoint = None
-    if len(sys.argv) > 6:
-        model_checkpoint = sys.argv[6]
+    # Parse the arguments
+    # args = parser.parse_args(args=temp)
+    args = parser.parse_args()
 
     valid_size=0.2
-    eval_interval=10
+    eval_interval=1
 
     transform_train = transforms.Compose([
     transforms.RandomCrop(32, padding=4),
@@ -329,7 +319,7 @@ def main():
         transforms.ToPILImage(),
         transforms.ToTensor(),
         transforms.Normalize((0.5,), (0.5,))])
-    images = np.load(os.path.join('../data/CIFAR-10-C', noisetype))
+    images = np.load(os.path.join('../data/CIFAR-10-C', args.noisetype))
     labels = np.load('../data/CIFAR-10-C/labels.npy')
     cifar10c_dataset = CIFAR10CDataset(data=images,labels=labels,transform=transform_cifar10c)
     cifar10c_attack_loader = DataLoader(cifar10c_dataset, batch_size=200, shuffle=False)
@@ -340,42 +330,49 @@ def main():
     alexnet = AlexNet().to(device)
     noise_model = nn.Sequential(nn.Linear(1,1, bias=True),nn.Sigmoid()).to(device)
 
-    if model_checkpoint is not None:
-        model_pt = os.path.join("weights", model_checkpoint)
+    if args.model_checkpoint is not None:
+        model_pt = os.path.join("weights", args.model_checkpoint)
         alexnet.load_state_dict(torch.load(model_pt))
         # Load optimizer too if needed
 
     optimizer = optim.SGD(list(alexnet.parameters()) + list(noise_model.parameters()), lr=0.01, momentum=0.9)
 
-    if losstype == 'trades':
-        beta = 1 / hyperparam
-        id = f'CIFARC10:Alexnet:TRADES_LOSS:BETA={beta}'
+    if args.losstype == 'trades':
+        beta = 1 / args.alpha
+        id = f'CIFARC10_Alexnet_TRADES_LOSS_BETA={beta}'
         trades_loss_beta = Loss(general_trades_loss_fn(beta=beta), id)
-        configuration = Configuration(cifar10_c_data, alexnet, optimizer, trades_loss_beta, identity_attack, id=trades_loss_beta.id + f":EVAL_NOISE={noisetype}")
-    elif losstype == 'ce':
-        id = f'CIFARC10:Alexnet:CE_LOSS'
+        configuration = Configuration(cifar10_c_data, alexnet, optimizer, trades_loss_beta, identity_attack, id=trades_loss_beta.id)
+    elif args.losstype == 'ce':
+        id = f'CIFARC10_Alexnet_CE_LOSS'
         ce_loss = Loss(ce_loss_fn, id)
-        configuration = Configuration(cifar10_c_data, alexnet, optimizer, ce_loss, identity_attack, id=ce_loss.id + f":EVAL_NOISE={noisetype}")
-    elif losstype == 'custom':
-        id = f'CIFARC10:Alexnet:CUSTOM_LOSS:SEVERITY={hyperparam}'
-        adaptive_loss_severity=Loss(general_adaptive_loss_fn(noise_model, hyperparam), id)
-        configuration = Configuration(cifar10_c_data, alexnet, optimizer, adaptive_loss_severity, identity_attack, id=adaptive_loss_severity.id + f":EVAL_NOISE={noisetype}")
+        configuration = Configuration(cifar10_c_data, alexnet, optimizer, ce_loss, identity_attack, id=ce_loss.id)
+    elif args.losstype == 'custom':
+        id = f'CIFARC10_Alexnet_CUSTOM_LOSS_SEVERITY={args.severity}_WNOISE={args.w_noise}_TAU1={args.tau1}_TAU2={args.tau2}'
+        adaptive_loss_severity=Loss(general_adaptive_loss_fn(noise_model, args.severity, args.w_noise, args.tau1, args.tau2), id)
+        configuration = Configuration(cifar10_c_data, alexnet, optimizer, adaptive_loss_severity, identity_attack, id=adaptive_loss_severity.id)
     else:
        print("Loss Type not supported")
        sys.exit(1)
 
     data, model, optimizer, loss, attack = configuration.getConfig()
 
-    if modetype == "train":   
-        current_loss = train(model, data, optimizer, loss, configuration, epochs, eval_interval, device)
+    if args.modetype == "train":   
+        start_time = time.time()
+        current_loss = train(model, data, optimizer, loss, configuration, args.epochs, eval_interval, device)
+        end_time = time.time()
 
         with open('results/final_loss.json', 'r') as fp:
             final_loss = json.load(fp)
+        with open('results/train_time.json', 'r') as fp:
+            train_times = json.load(fp)
 
-        final_loss[configuration.getId()] = current_loss
+        final_loss[configuration.getId() + f"_EPOCHS={args.epochs}"] = current_loss
+        train_times[configuration.getId() + f"_EPOCHS={args.epochs}"] = end_time - start_time 
 
         with open('results/final_loss.json', 'w') as fp:
             json.dump(final_loss, fp)
+        with open('results/train_time.json', 'w') as fp:
+            json.dump(train_times, fp)
 
     current_accuracy = accuracy(model, data.test_loader, device)
     current_robust_accuracy = robust_accuracy(model, attack, data.attack_loader, device)
@@ -385,8 +382,8 @@ def main():
     with open('results/robustness_accuracy.json', 'r') as fp:
         robustness_accuracy = json.load(fp)
 
-    natural_accuracy[configuration.getId()] = current_accuracy
-    robustness_accuracy[configuration.getId()] = current_robust_accuracy
+    natural_accuracy[configuration.getId() + f"_EPOCHS={args.epochs}"] = current_accuracy
+    robustness_accuracy[configuration.getId() + f"_EPOCHS={args.epochs}_EVAL_NOISE={args.noisetype}"] = current_robust_accuracy
 
     with open('results/natural_accuracy.json', 'w') as fp:
         json.dump(natural_accuracy, fp)
@@ -394,4 +391,5 @@ def main():
         json.dump(robustness_accuracy, fp)
 
 if __name__ == "__main__":
+    # main(["train", "custom", "gaussian_noise.npy", "2", "0.05", "0.1", "10", "-10", "10"])
     main()
