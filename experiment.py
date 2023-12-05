@@ -222,8 +222,8 @@ def train(model, data, optimizer, loss, config, epochs, eval_interval, device):
       if (eval_acc > best_eval_acc):  # best so far so save checkpoint to restore later
         best_eval_acc = eval_acc
         patience_count = 0
-        torch.save(model.state_dict(), os.path.join("weights", loss.id))
-        torch.save(optimizer.state_dict(), os.path.join("optimizers", loss.id))
+        torch.save(model.state_dict(), os.path.join("weights", loss.id + '.pt'))
+        torch.save(optimizer.state_dict(), os.path.join("optimizers", loss.id + '.tar'))
       else:
           patience_count += 1
 
