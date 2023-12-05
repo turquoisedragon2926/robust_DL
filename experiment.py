@@ -268,23 +268,25 @@ def train(model, data, optimizer, loss, config, epochs, eval_interval, device):
 
   return total_loss
 
-def main(temp):
+def main():
     parser = argparse.ArgumentParser(description='Command line arguments for experiment script.')
 
-    parser.add_argument('modetype', type=str, default="train", choices=['eval', 'train'], help='Mode type: eval or train')
-    parser.add_argument('losstype', type=str, default="custom", choices=['trades', 'custom', 'ce'], help='Loss type: trades or custom or ce')
-    parser.add_argument('noisetype', type=str, default='gaussian_noise.npy', help='Type of noise (default: gaussian_noise.npy)')
-    parser.add_argument('alpha', type=float, default=2.0, help='Alpha value (default: 2)')
-    parser.add_argument('severity', type=float, default=0.05, help='severity value (default: 0.05)')
-    parser.add_argument('w_noise', type=float, default=0.1, help='weightage of our noise value (default: 0.1)')
-    parser.add_argument('tau1', type=int, default=10, help='Tau1 for norm clipping (default: 10)')
-    parser.add_argument('tau2', type=int, default=-10, help='Tau2 for norm clipping (default: -10)')
-    parser.add_argument('epochs', type=int, default=10, help='Number of epochs (default: 25)')
+    parser.add_argument('modetype', type=str, nargs='?', default="train", choices=['eval', 'train'], help='Mode type: eval or train')
+    parser.add_argument('losstype', type=str, nargs='?', default="custom", choices=['trades', 'custom', 'ce'], help='Loss type: trades or custom or ce')
+    parser.add_argument('noisetype', type=str, nargs='?', default='gaussian_noise.npy', help='Type of noise (default: gaussian_noise.npy)')
+    parser.add_argument('alpha', type=float, nargs='?', default=2.0, help='Alpha value (default: 2)')
+    parser.add_argument('severity', type=float, nargs='?', default=0.05, help='severity value (default: 0.05)')
+    parser.add_argument('w_noise', type=float, nargs='?', default=0.1, help='weightage of our noise value (default: 0.1)')
+    parser.add_argument('tau1', type=int, nargs='?', default=10, help='Tau1 for norm clipping (default: 10)')
+    parser.add_argument('tau2', type=int, nargs='?', default=-10, help='Tau2 for norm clipping (default: -10)')
+    parser.add_argument('epochs', type=int, nargs='?', default=10, help='Number of epochs (default: 25)')
     parser.add_argument('model_checkpoint', type=str, nargs='?', default=None, help='Path to model checkpoint (optional)')
 
     # Parse the arguments
     # args = parser.parse_args(args=temp)
     args = parser.parse_args()
+
+    print("PARSED ARGS")
 
     valid_size=0.2
     eval_interval=1
