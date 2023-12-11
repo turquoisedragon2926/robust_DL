@@ -19,10 +19,10 @@ def accuracy(configuration, device):
 
     return 100. * correct / total
 
-def robust_accuracy(model, configuration, device):
+def robust_accuracy(configuration, device):
     logger = Logger.get_instance()
     logger.log("ROBUSTNESS EVALUATION")
-    model.eval()
+    configuration.model.eval()
     correct = 0
     total = 0
 
@@ -30,7 +30,7 @@ def robust_accuracy(model, configuration, device):
         data, target = data.to(device), target.to(device)
 
         X, y = Variable(data, requires_grad=True), Variable(target)
-        correct_count = configuration.attack(model, X, y)
+        correct_count = configuration.attack(configuration.model, X, y)
         correct += correct_count
         total += target.size(0)
     return 100. * correct / total
