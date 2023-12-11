@@ -1,30 +1,38 @@
 #!/bin/bash
 
 # Default values for arguments
-modetype=""
-losstype=""
-noisetype=""
+mode_type=""
+model_type=""
+loss_type=""
+noise_type=""
+epochs=""
+valid_size=""
+eval_interval=""
 model_checkpoint=""
+optimizer_checkpoint=""
 alpha=""
 severity=""
 w_noise=""
 tau1=""
 tau2=""
-epochs=""
 
 # Parse named arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
-        --modetype) modetype="$2"; shift ;;
-        --losstype) losstype="$2"; shift ;;
-        --noisetype) noisetype="$2"; shift ;;
+        --mode_type) mode_type="$2"; shift ;;
+        --model_type) model_type="$2"; shift ;;
+        --loss_type) loss_type="$2"; shift ;;
+        --noise_type) noise_type="$2"; shift ;;
+        --epochs) epochs="$2"; shift ;;
+        --valid_size) valid_size="$2"; shift ;;
+        --eval_interval) eval_interval="$2"; shift ;;
         --model_checkpoint) model_checkpoint="$2"; shift ;;
+        --optimizer_checkpoint) optimizer_checkpoint="$2"; shift ;;
         --alpha) alpha="$2"; shift ;;
         --severity) severity="$2"; shift ;;
         --w_noise) w_noise="$2"; shift ;;
         --tau1) tau1="$2"; shift ;;
         --tau2) tau2="$2"; shift ;;
-        --epochs) epochs="$2"; shift ;;
         *) echo "Unknown parameter: $1"; exit 1 ;;
     esac
     shift
@@ -40,7 +48,7 @@ sbatch <<EOT
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-task=1
 #SBATCH --qos=regular
-#SBATCH --job-name ${modetype}_${losstype}_${noisetype}_${epochs}
+#SBATCH --job-name ${mode_type}_${loss_type}_${noise_type}_${epochs}
 #SBATCH --mail-user=richardr2926@gmail.com
 #SBATCH --mail-type=ALL
 #SBATCH --time=1:10:00
@@ -54,7 +62,7 @@ export LD_PRELOAD=/opt/cray/pe/lib64/libmpi_gtl_cuda.so.0
 module load conda
 conda activate robust_DL
 module load pytorch/2.0.1
-python3 experiment.py --modetype $modetype --losstype $losstype --noisetype $noisetype --alpha $alpha --severity $severity --w_noise $w_noise --tau1 $tau1 --tau2 $tau2 --epochs $epochs --model_checkpoint $model_checkpoint
+python3 experiment.py --mode_type $mode_type --model_type $mode_type --loss_type $loss_type --noise_type $noise_type --epochs $epochs --valid_size $valid_size --eval_interval $eval_interval --model_checkpoint $model_checkpoint --optimizer_checkpoint $optimizer_checkpoint --alpha $alpha --severity $severity --w_noise $w_noise --tau1 $tau1 --tau2 $tau2
 
 exit 0
 EOT

@@ -14,15 +14,15 @@
 `salloc --nodes=1 --constraint=gpu --gpus=1 --qos=interactive --time=00:10:00 --account=m3863_g --ntasks=1 --gpus-per-task=1`
 
 # Evaluate trades model on given noise type
-`python3 experiment.py --modetype eval --losstype trades --noisetype gaussian_noise.npy --alpha 2 --model_checkpoint "CIFARC10_Alexnet_TRADES_LOSS_BETA=0.5_EPOCHS=50.pt"`
+`python3 experiment.py --mode_type eval --loss_type trades --noise_type gaussian_noise.npy --alpha 2 --model_checkpoint "CIFARC10_Alexnet_TRADES_LOSS_BETA=0.5_EPOCHS=50.pt"`
 
 # Uhhh
 
-`srun --export=ALL python3 experiment.py --modetype eval --losstype trades --noisetype gaussian_noise.npy --alpha 2 --severity $severity --w_noise $w_noise --tau1 $tau1 --tau2 $tau2 --epochs $epochs --model_checkpoint $model_checkpoint`
+`srun --export=ALL python3 experiment.py --mode_type eval --loss_type trades --noise_type gaussian_noise.npy --alpha 2 --severity $severity --w_noise $w_noise --tau1 $tau1 --tau2 $tau2 --epochs $epochs --model_checkpoint $model_checkpoint`
 
 # Train custom loss
 
-`python3 experiment.py --modetype train --losstype custom --noisetype gaussian_blur.npy --w_noise 0.1 --severity 0.05 --tau1 10 --tau2 -10 --epochs 50`
+`python3 experiment.py --mode_type train --loss_type custom --noise_type gaussian_blur.npy --w_noise 0.1 --severity 0.05 --tau1 10 --tau2 -10 --epochs 50`
 ```
 mv ~/.conda/envs/sysml/* $SCRATCH/sysml/
 rmdir ~/.conda/envs/sysml
