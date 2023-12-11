@@ -5,7 +5,7 @@ from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, SubsetRandomSampler
 from .components import CIFAR10CDataset
 
-class DataLoader:
+class DataLoaderFactory:
     def __init__(self, root, valid_size, batch_size=128, num_workers=1, pin_memory=True):
         self.root = root
         self.valid_size = valid_size

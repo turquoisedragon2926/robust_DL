@@ -24,7 +24,7 @@ from attacks.identity import identity_attack
 from utils.logger import Logger
 
 from utils.components import Configuration, Data
-from utils.data_loader import DataLoader
+from utils.data_loader import DataLoaderFactory
 from utils.train import train
 from utils.evaluate import accuracy, robust_accuracy
 from utils.utils import save_to_key
@@ -73,7 +73,7 @@ def main():
     Logger.initialize(log_filename=f"{config_id}.txt")
     logger = Logger.get_instance()
 
-    data_loader = DataLoader(root='data', valid_size=args.valid_size)
+    data_loader = DataLoaderFactory(root='data', valid_size=args.valid_size)
     train_loader, valid_loader, test_loader = data_loader.get_cifar10_loaders()
 
     cifar10c_attack_loader = data_loader.get_cifar10c_attack_loader(args.noise_type)
