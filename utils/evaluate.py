@@ -2,15 +2,17 @@ import torch
 from torch.autograd import Variable
 from .logger import Logger
 
-def accuracy(configuration, device):
+def accuracy(configuration, device, valid=False):
     logger = Logger.get_instance()
     logger.log("EVALUATION")
     configuration.model.eval()
     correct = 0
     total = 0
 
+    data_loader = configuration.data.valid_loader if valid else configuration.data.test_loader
+
     with torch.no_grad():
-        for batch_idx, (data, target) in enumerate(configuration.data.test_loader):
+        for batch_idx, (data, target) in enumerate(data_loader):
             data, target = data.to(device), target.to(device)
             outputs = configuration.model(data)
             _, predicted = torch.max(outputs, 1)

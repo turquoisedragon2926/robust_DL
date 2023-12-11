@@ -46,7 +46,7 @@ def train(configuration, args, device):
     epoch_losses.append(total_loss / len(data_loader))
 
     if epoch == 1 or epoch % args.eval_interval == 0 or epoch == args.epochs:
-      eval_acc= accuracy(configuration.model, valid_loader, device)
+      eval_acc= accuracy(configuration, device, valid=True)
       eval_accuracies.append(eval_acc)
 
       if (eval_acc > best_eval_acc):  # best so far so save checkpoint to restore later
