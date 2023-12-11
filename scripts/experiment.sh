@@ -62,7 +62,7 @@ export LD_PRELOAD=/opt/cray/pe/lib64/libmpi_gtl_cuda.so.0
 module load conda
 conda activate robust_DL
 module load pytorch/2.0.1
-python3 experiment.py --mode_type $mode_type --model_type $mode_type --loss_type $loss_type --noise_type $noise_type --epochs $epochs --valid_size $valid_size --eval_interval $eval_interval --model_checkpoint $model_checkpoint --optimizer_checkpoint $optimizer_checkpoint --alpha $alpha --severity $severity --w_noise $w_noise --tau1 $tau1 --tau2 $tau2
+python3 main.py --mode_type $mode_type --model_type $mode_type --loss_type $loss_type --noise_type $noise_type --epochs $epochs --valid_size $valid_size --eval_interval $eval_interval --model_checkpoint $model_checkpoint --optimizer_checkpoint $optimizer_checkpoint --alpha $alpha --severity $severity --w_noise $w_noise --tau1 $tau1 --tau2 $tau2
 
 exit 0
 EOT

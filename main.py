@@ -47,7 +47,7 @@ def main():
     # Common Parameters
     parser.add_argument('--mode_type', type=str, default="train", choices=['eval', 'train'], help='Mode type: train or eval only')
     parser.add_argument('--model_type', type=str, default="alexnet", choices=['alexnet'], help='Model type: alexnet')
-    parser.add_argument('--loss_type', type=str, default="custom", choices=['trades', 'custom', 'ce'], help='Loss type: trades or custom or ce')
+    parser.add_argument('--loss_type', type=str, default="adaptive", choices=['trades', 'adaptive', 'ce'], help='Loss type: trades or custom or ce')
     parser.add_argument('--noise_type', type=str, default='gaussian_noise.npy', help='Type of noise (default: gaussian_noise.npy)')
     parser.add_argument('--epochs', type=int, default=50, help='Number of epochs (default: 50)')
     parser.add_argument('--valid_size', type=float, default=0.2, help='Validation dataset ratio')
@@ -107,7 +107,7 @@ def main():
         loss_fn = general_trades_loss_fn(beta=beta)
     elif args.loss_type == 'ce':
         loss_fn = ce_loss
-    elif args.loss_type == 'custom':
+    elif args.loss_type == 'adaptive':
         loss_fn = general_adaptive_loss_fn(noise_model, args.severity, args.w_noise, args.tau1, args.tau2)
     else:
         logger.log("Loss Type not supported")
