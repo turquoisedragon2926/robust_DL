@@ -8,7 +8,7 @@
 `scp weights/CIFARC10_Alexnet_TRADES_LOSS_BETA=0.5.pt richardr@perlmutter.nersc.gov:/global/homes/r/richardr/deep/robust_DL/weights/ `
 
 # Move all results plots weights optimizers to local
-`ssh -l richardr -i ~/.ssh/nersc perlmutter.nersc.gov "cd /global/homes/r/richardr/deep/robust_DL/ && tar cz results plots weights optimizers" | tar zxv -C /Users/richardr2926/Desktop/MSCS_Data/CS_7643/robust_DL/`
+`ssh -l richardr -i ~/.ssh/nersc perlmutter.nersc.gov "cd /global/homes/r/richardr/deep/robust_DL/results && tar cz metrics models optimizers plots logs" | tar zxv -C /Users/richardr2926/Desktop/MSCS_Data/CS_7643/robust_DL/results`
 
 # Allocate to run tests
 `salloc --nodes=1 --constraint=gpu --gpus=1 --qos=interactive --time=00:10:00 --account=m3863_g --ntasks=1 --gpus-per-task=1`
