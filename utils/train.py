@@ -52,6 +52,10 @@ def train(configuration, args, device):
       if (eval_acc > best_eval_acc):  # best so far so save checkpoint to restore later
         best_eval_acc = eval_acc
         patience_count = 0
+
+        os.makedirs(os.path.join("results", "models"), exist_ok=True)
+        os.makedirs(os.path.join("results", "optimizers"), exist_ok=True)
+        
         torch.save(configuration.model.state_dict(), os.path.join("results", "models", configuration.id + '.pt'))
         torch.save(configuration.optimizer.state_dict(), os.path.join("results", "optimizers", configuration.id + '.tar'))
       else:
