@@ -1,3 +1,7 @@
 TRADES/
 *.tar
 *.pt
+plots/
+weights/
+optimizers/
+notes.md
