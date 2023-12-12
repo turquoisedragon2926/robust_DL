@@ -52,7 +52,7 @@ class Plotter:
 
     def plot_severity_vs_robustness(self, severities, natural_accuracies, robustness_accuracies, train_noise, plot_name='severity_vs_robustness.png'):
         """
-        Plots severity vs average robustness accuracy.
+        Plots severity vs natural and average robustness accuracy.
         :param severities: List of severities.
         :param natural_accuracies: List of natural accuracy for each severity.
         :param robustness_accuracies: List of average robustness accuracy for each severity.
@@ -60,10 +60,13 @@ class Plotter:
         :param plot_name: Filename for the saved plot.
         """
         plt.figure(figsize=(10, 5))
-        plt.plot(severities, robustness_accuracies, marker='o', label=f'{train_noise} Train Noise')
-        plt.title(f'Severity vs Robustness Accuracy for {train_noise} Noise')
+        # Plot natural accuracies
+        plt.plot(severities, natural_accuracies, marker='s', linestyle='--', color='green', label='Natural Accuracy')
+        # Plot robustness accuracies
+        plt.plot(severities, robustness_accuracies, marker='o', linestyle='-', color='blue', label=f'Robustness Accuracy ({train_noise} Noise)')
+        plt.title(f'Severity vs Accuracy for {train_noise} Noise')
         plt.xlabel('Severity')
-        plt.ylabel('Robustness Accuracy')
+        plt.ylabel('Accuracy')
         plt.legend()
         plt.grid(True)
         plt.savefig(os.path.join(self.plot_dir, f'{train_noise}_{plot_name}'))
@@ -90,9 +93,15 @@ class Plotter:
         plt.xlabel('Eval Noise')
         plt.ylabel('Accuracy')
         plt.title(f'Accuracy by Eval Noise and Severity for {train_noise} Noise')
-        plt.xticks(index + bar_width, eval_noises)
+
+        # Rotate the x-axis labels to avoid overlapping
+        plt.xticks(index + bar_width / 2, eval_noises, rotation=90, ha='center')
+
         plt.legend()
-        plt.tight_layout()
+
+        # Adjust the subplot parameters to give the x-axis labels more space
+        plt.subplots_adjust(bottom=0.15)
+
         plt.grid(True)
         plt.savefig(os.path.join(self.plot_dir, f'{train_noise}_{plot_name}'))
         plt.close()

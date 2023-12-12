@@ -53,7 +53,7 @@ def main():
         robustness_accuracies = []
 
         for severity in severities:
-            logger.log(f"ON SEVERITY = {train_noise}")
+            logger.log(f"ON SEVERITY = {severity}")
 
             args.train_noise = train_noise
             args.severity = severity
