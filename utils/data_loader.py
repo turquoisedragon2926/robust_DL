@@ -13,14 +13,14 @@ class DataLoaderFactory:
         self.num_workers = num_workers
         self.pin_memory = pin_memory
 
-    def get_cifar10c_attack_loader(self, noise_type):
+    def get_cifar10c_attack_loader(self, eval_noise):
 
         transform_cifar10c = transforms.Compose([
             transforms.ToPILImage(),
             transforms.ToTensor(),
             transforms.Normalize((0.5,), (0.5,))])
 
-        images = np.load(os.path.join('data/CIFAR-10-C', noise_type))
+        images = np.load(os.path.join('data/CIFAR-10-C', eval_noise))
         labels = np.load('data/CIFAR-10-C/labels.npy')
         cifar10c_dataset = CIFAR10CDataset(data=images,labels=labels,transform=transform_cifar10c)
         cifar10c_attack_loader = DataLoader(cifar10c_dataset, batch_size=self.batch_size, shuffle=False)

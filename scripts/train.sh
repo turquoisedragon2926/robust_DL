@@ -1,6 +1,17 @@
-w_noises=(0.1 0.2 0.5 1.0)
+severities=(0.05 0.1 0.25 0.5 0.75 1)
 
-for w_noise in "${w_noises[@]}"
-do
-    bash scripts/experiment.sh --w_noise $w_noise --mode_type train --loss_type adaptive --noise_type gaussian_blur.npy --epochs 50 
+for severity in "${severities[@]}"; do
+    bash scripts/experiment.sh \
+        --mode_type train \
+        --model_type alexnet \
+        --loss_type adaptive \
+        --train_noise gaussian \
+        --eval_noise gaussian_noise.npy \
+        --epochs 50 \
+        --valid_size .2 \
+        --eval_interval 1 \
+        --severity $severity \
+        --w_noise 0.1 \
+        --tau1 10 \
+        --epochs 50 
 done

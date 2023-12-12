@@ -35,9 +35,9 @@ def general_trades_loss_fn(beta=6.0, epsilon=0.3, step_size=0.007, num_steps=10)
                       epsilon=epsilon, perturb_steps=num_steps, beta=beta, distance='l_inf')
   return trades_loss_fn
 
-def general_adaptive_loss_fn(noise_model, severity, w_noise, tau1, tau2):
+def general_adaptive_loss_fn(noise_model, train_noise, severity, w_noise, tau1, tau2):
   def adaptive_loss_fn(model, data, target, optimizer):
-    return adaptive_loss(model, data, target, noise_model, severity=severity, w_noise=w_noise, tau1=tau1, tau2=tau2)
+    return adaptive_loss(model, data, target, train_noise, noise_model, severity=severity, w_noise=w_noise, tau1=tau1, tau2=tau2)
 
   return adaptive_loss_fn
 
@@ -48,7 +48,8 @@ def main():
     parser.add_argument('--mode_type', type=str, default="train", choices=['eval', 'train'], help='Mode type: train or eval only')
     parser.add_argument('--model_type', type=str, default="alexnet", choices=['alexnet'], help='Model type: alexnet')
     parser.add_argument('--loss_type', type=str, default="adaptive", choices=['trades', 'adaptive', 'ce'], help='Loss type: trades or custom or ce')
-    parser.add_argument('--noise_type', type=str, default='gaussian_noise.npy', help='Type of noise (default: gaussian_noise.npy)')
+    parser.add_argument('--train_noise', type=str, default='gaussian', choices=['gaussian', 'uniform', 'shot', 'blur', 'random'], help='Type of noise to use while training (default: gaussian)')
+    parser.add_argument('--eval_noise', type=str, default='gaussian_noise.npy', help='Type of noise (default: gaussian_noise.npy)')
     parser.add_argument('--epochs', type=int, default=50, help='Number of epochs (default: 50)')
     parser.add_argument('--valid_size', type=float, default=0.2, help='Validation dataset ratio')
     parser.add_argument('--eval_interval', type=int, default=1, help='Evaluation interval for robustness plot')
@@ -76,7 +77,7 @@ def main():
     data_loader = DataLoaderFactory(root='data', valid_size=args.valid_size)
     train_loader, valid_loader, test_loader = data_loader.get_cifar10_loaders()
 
-    cifar10c_attack_loader = data_loader.get_cifar10c_attack_loader(args.noise_type)
+    cifar10c_attack_loader = data_loader.get_cifar10c_attack_loader(args.eval_noise)
 
     # Pass these loaders to the Data class
     cifar10_c_data = Data(train_loader, valid_loader, test_loader, cifar10c_attack_loader)
@@ -108,7 +109,7 @@ def main():
     elif args.loss_type == 'ce':
         loss_fn = ce_loss
     elif args.loss_type == 'adaptive':
-        loss_fn = general_adaptive_loss_fn(noise_model, args.severity, args.w_noise, args.tau1, args.tau2)
+        loss_fn = general_adaptive_loss_fn(noise_model, train_noise, args.severity, args.w_noise, args.tau1, args.tau2)
     else:
         logger.log("Loss Type not supported")
         sys.exit(1)
