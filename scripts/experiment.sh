@@ -23,7 +23,7 @@ while [[ "$#" -gt 0 ]]; do
         --mode_type) mode_type="$2"; shift ;;
         --model_type) model_type="$2"; shift ;;
         --loss_type) loss_type="$2"; shift ;;
-        --train_noise) eval_noise="$2"; shift ;;
+        --train_noise) train_noise="$2"; shift ;;
         --eval_noise) eval_noise="$2"; shift ;;
         --epochs) epochs="$2"; shift ;;
         --valid_size) valid_size="$2"; shift ;;
