@@ -16,7 +16,7 @@ for train_noise in "${train_noises[@]}"; do
             --loss_type adaptive \
             --train_noise $train_noise \
             --eval_noise gaussian_noise.npy \
-            --epochs 50 \
+            --epochs 10 \
             --valid_size 0.2 \
             --eval_interval 1 \
             --severity $severity \

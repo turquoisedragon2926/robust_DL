@@ -20,7 +20,6 @@ class Plotter:
         :param plot_name: Filename for the saved plot.
         """
         plt.figure(figsize=(12, 5))
-        plt.suptitle(plot_name)
 
         # Plot training loss
         plt.subplot(1, 2, 1)
@@ -41,6 +40,12 @@ class Plotter:
         if cifar10c_eval_acc is not None:
             plt.axhline(y=cifar10c_eval_acc, color='r', linestyle='-', label='CIFAR 10 C EVAL')
 
+        # Adjust layout to prevent overlap and provide space for suptitle
+        plt.tight_layout(rect=[0, 0, 1, 0.95])
+
+        # Set suptitle and adjust its position
+        plt.suptitle(plot_name, y=0.98)
+        
         # Save the plot
         plt.savefig(os.path.join(self.plot_dir, plot_name))
         plt.close()
