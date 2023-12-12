@@ -55,7 +55,7 @@ def main():
     if args.model_type == 'alexnet':
         model = AlexNet().to(device)
     else:
-       logger.log("Model Type not supported")
+       logger.log("MODEL TYPE NOT SUPPORTED")
        sys.exit(1)
 
     # Define our learnable noise model and the optimizer

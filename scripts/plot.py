@@ -37,20 +37,22 @@ def main():
     if args.model_type == 'alexnet':
         model = AlexNet().to(device)
     else:
-       logger.log("Model Type not supported")
+       logger.log("MODEL TYPE NOT SUPPORTED")
        sys.exit(1)
 
     natural_accuracy_path = 'results/metrics/natural_accuracy.json'
     robustness_accuracy_path = 'results/metrics/robustness_accuracy.json'
 
     for train_noise in train_noises:
+        logger.log(f"EVAL STARTED FOR {train_noise} NOISE")
         severity_accuracies = {}
 
         natural_accuracies = []
         robustness_accuracies = []
 
         for severity in severities:
-            
+            logger.log(f"ON SEVERITY = {train_noise}")
+
             args.train_noise = train_noise
             args.severity = severity
 
@@ -65,6 +67,7 @@ def main():
             severity_robustness_accuracies = []
 
             for eval_noise in eval_noises:
+                logger.log(f"ON EVALUATION NOISE = {eval_noise}")
 
                 if eval_noise == 'none':
                     natural_accuracy = load_from_key(natural_accuracy_path, config_id)
