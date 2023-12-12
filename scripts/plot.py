@@ -34,7 +34,7 @@ def main():
 
     train_noises = ["gaussian", "uniform", "shot", "blur", "random"]
     eval_noises = ["none", "saturate.npy", "spatter.npy", "gaussian_blur.npy", "speckle_noise.npy", "jpeg_compression.npy", "pixelate.npy", "elastic_transform.npy", "contrast.npy", "brightness.npy", "fog.npy", "frost.npy", "snow.npy", "zoom_blur.npy", "motion_blur.npy", "defocus_blur.npy", "impulse_noise.npy", "shot_noise.npy", "gaussian_noise.npy"]
-    severities = [0.05, 0.1, 0.25, 0.5, 0.75, 1]
+    severities = [0.05, 0.1, 0.25, 0.5, 0.75, 1.0]
 
     if args.model_type == 'alexnet':
         model = AlexNet().to(device)
@@ -45,6 +45,7 @@ def main():
     natural_accuracy_path = 'results/metrics/natural_accuracy.json'
     robustness_accuracy_path = 'results/metrics/robustness_accuracy.json'
 
+    total_robustness_accuracies = {}
     for train_noise in train_noises:
         logger.log(f"EVAL STARTED FOR {train_noise} NOISE")
         severity_accuracies = {}
@@ -97,9 +98,12 @@ def main():
             robustness_accuracies.append(sum(severity_robustness_accuracies) / len(severity_robustness_accuracies))
             severity_accuracies[severity] = severity_robustness_accuracies
 
+        total_robustness_accuracies[train_noise] = robustness_accuracies
         configuration.id = get_config_id(args, disclude=['eval_noise'])
         plotter.plot_severity_vs_robustness(severities, natural_accuracies, robustness_accuracies, train_noise, plot_name=f"{configuration.id}_severity_vs_robustness.png")
         plotter.plot_eval_noise_bar_chart(eval_noises, severity_accuracies, train_noise, plot_name=f"{configuration.id}_noise_vs_robustness.png")
+    
+    plotter.plot_combined_severity_vs_robustness(severities, total_robustness_accuracies, train_noises, plot_name=f"{configuration.id}_combined_severity_vs_robustness.png")
 
 if __name__ == "__main__":
     main()

@@ -72,6 +72,37 @@ class Plotter:
         plt.savefig(os.path.join(self.plot_dir, f'{train_noise}_{plot_name}'))
         plt.close()
 
+    def combined_plot_severity_vs_robustness(self, severities, robustness_accuracies, train_noises, plot_name='combined_severity_vs_robustness.png'):
+        """
+        Plots severity vs natural and average robustness accuracy for all train_noises.
+        :param severities: List of severities.
+        :param natural_accuracies: List of natural accuracy for each severity.
+        :param robustness_accuracies: Dictionary with keys as train_noise the model was trained on and values as lists of accuracies for each severity.
+        :param train_noises: The type of noises the models were trained on.
+        :param plot_name: Filename for the saved plot.
+        """
+
+        plt.figure(figsize=(10, 5))
+
+        # Define a list of colors for the plot lines
+        colors = ['blue', 'green', 'red', 'cyan', 'magenta', 'yellow', 'black', 'orange', 'purple', 'brown']
+        color_index = 0
+
+        for noise in train_noises:
+            # Check if the noise type is in the robustness_accuracies dictionary and if we have enough colors
+            if noise in robustness_accuracies and color_index < len(colors):
+                # Plot the robustness accuracies for each noise type with a specific color
+                plt.plot(severities, robustness_accuracies[noise], marker='o', linestyle='-', label=f'{noise} Noise', color=colors[color_index])
+                color_index += 1
+
+        plt.title('Severity vs Average Robustness Accuracy for Different Noises')
+        plt.xlabel('Severity')
+        plt.ylabel('Accuracy')
+        plt.legend()
+        plt.grid(True)
+        plt.savefig(os.path.join(self.plot_dir, plot_name))
+        plt.close()
+
     def plot_eval_noise_bar_chart(self, eval_noises, severity_accuracies, train_noise, plot_name='eval_noise_bar_chart.png'):
         """
         Bar plot where x axis is the eval noise and for each eval noise, there are bars for each severity.
