@@ -1,40 +1,18 @@
 #!/bin/bash
 
-# Default values for arguments
-mode_type=""
-model_type=""
-loss_type=""
-train_noise=""
-eval_noise=""
-epochs=""
-valid_size=""
-eval_interval=""
-model_checkpoint=""
-optimizer_checkpoint=""
-alpha=""
-severity=""
-w_noise=""
-tau1=""
-tau2=""
+# Function to echo the flag and value only if the value is not empty
+add_arg() {
+    local arg_name="$1"
+    local arg_value="$2"
+    if [ -n "$arg_value" ]; then
+        echo "--$arg_name $arg_value"
+    fi
+}
 
 # Parse named arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
-        --mode_type) mode_type="$2"; shift ;;
-        --model_type) model_type="$2"; shift ;;
-        --loss_type) loss_type="$2"; shift ;;
-        --train_noise) train_noise="$2"; shift ;;
-        --eval_noise) eval_noise="$2"; shift ;;
-        --epochs) epochs="$2"; shift ;;
-        --valid_size) valid_size="$2"; shift ;;
-        --eval_interval) eval_interval="$2"; shift ;;
-        --model_checkpoint) model_checkpoint="$2"; shift ;;
-        --optimizer_checkpoint) optimizer_checkpoint="$2"; shift ;;
-        --alpha) alpha="$2"; shift ;;
-        --severity) severity="$2"; shift ;;
-        --w_noise) w_noise="$2"; shift ;;
-        --tau1) tau1="$2"; shift ;;
-        --tau2) tau2="$2"; shift ;;
+        --*) arg_name="${1:2}"; declare "$arg_name"="$2"; shift ;;
         *) echo "Unknown parameter: $1"; exit 1 ;;
     esac
     shift
@@ -66,21 +44,21 @@ conda activate robust_DL
 module load pytorch/2.0.1
 
 python3 main.py \
-    --mode_type $mode_type \
-    --model_type $model_type \
-    --loss_type $loss_type \
-    --train_noise $train_noise \
-    --eval_noise $eval_noise \
-    --epochs $epochs \
-    --valid_size $valid_size \
-    --eval_interval $eval_interval \
-    $(if [ -n "$model_checkpoint" ]; then echo "--model_checkpoint $model_checkpoint"; fi) \
-    $(if [ -n "$optimizer_checkpoint" ]; then echo "--optimizer_checkpoint $optimizer_checkpoint"; fi) \
-    --alpha $alpha \
-    --severity $severity \
-    --w_noise $w_noise \
-    --tau1 $tau1 \
-    --tau2 $tau2
+    $(add_arg mode_type "$mode_type") \
+    $(add_arg model_type "$model_type") \
+    $(add_arg loss_type "$loss_type") \
+    $(add_arg train_noise "$train_noise") \
+    $(add_arg eval_noise "$eval_noise") \
+    $(add_arg epochs "$epochs") \
+    $(add_arg valid_size "$valid_size") \
+    $(add_arg eval_interval "$eval_interval") \
+    $(add_arg model_checkpoint "$model_checkpoint") \
+    $(add_arg optimizer_checkpoint "$optimizer_checkpoint") \
+    $(add_arg alpha "$alpha") \
+    $(add_arg severity "$severity") \
+    $(add_arg w_noise "$w_noise") \
+    $(add_arg tau1 "$tau1") \
+    $(add_arg tau2 "$tau2")
 
 exit 0
 EOT
