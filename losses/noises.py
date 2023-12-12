@@ -32,10 +32,10 @@ class UniformNoise(NoiseFunction):
 
 class ShotNoise(NoiseFunction):
     def add_noise(self, data):
-        # The severity factor can be used to scale the noise
+        # The severity factor to scale the noise
         max_val = data.max()
         noise = torch.poisson(data * self.severity) / self.severity - data
-        noise *= max_val / noise.max()  # Optional: scale the noise to match the max value of the data
+        noise *= max_val / noise.max()  # scale the noise to match the max value of the data
 
         noise = noise.to(self.device)
 
