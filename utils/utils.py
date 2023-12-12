@@ -39,6 +39,8 @@ def load_from_key(path, key):
     return None
 
 def save_to_key(path, key, value):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+
     data = {}
     if os.path.exists(path):
         with open(path, 'r') as fp:
