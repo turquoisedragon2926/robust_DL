@@ -72,7 +72,7 @@ class Plotter:
         plt.savefig(os.path.join(self.plot_dir, f'{train_noise}_{plot_name}'))
         plt.close()
 
-    def combined_plot_severity_vs_robustness(self, severities, robustness_accuracies, train_noises, plot_name='combined_severity_vs_robustness.png'):
+    def plot_combined_severity_vs_robustness(self, severities, robustness_accuracies, train_noises, plot_name='combined_severity_vs_robustness.png'):
         """
         Plots severity vs natural and average robustness accuracy for all train_noises.
         :param severities: List of severities.
