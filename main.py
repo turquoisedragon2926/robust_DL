@@ -109,7 +109,7 @@ def main():
     elif args.loss_type == 'ce':
         loss_fn = ce_loss
     elif args.loss_type == 'adaptive':
-        loss_fn = general_adaptive_loss_fn(noise_model, train_noise, args.severity, args.w_noise, args.tau1, args.tau2)
+        loss_fn = general_adaptive_loss_fn(noise_model, args.train_noise, args.severity, args.w_noise, args.tau1, args.tau2)
     else:
         logger.log("Loss Type not supported")
         sys.exit(1)
