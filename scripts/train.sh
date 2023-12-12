@@ -13,5 +13,4 @@ for severity in "${severities[@]}"; do
         --severity $severity \
         --w_noise 0.1 \
         --tau1 10 \
-        --epochs 50 
 done
