@@ -53,7 +53,7 @@ sbatch <<EOT
 #SBATCH --job-name ${mode_type}_${loss_type}_${eval_noise}_${epochs}
 #SBATCH --mail-user=richardr2926@gmail.com
 #SBATCH --mail-type=ALL
-#SBATCH --time=1:10:00
+#SBATCH --time=0:30:00
 #SBATCH --account=m3863_g
 #SBATCH --gpu-bind=none
 
