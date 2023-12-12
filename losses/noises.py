@@ -52,7 +52,7 @@ class BlurNoise(NoiseFunction):
         # Create a 1D Gaussian kernel
         kernel_1d = torch.tensor([1.0], device=self.device).new_full((kernel_size,), 1.0)
         for i in range(1, (kernel_size // 2) + 1):
-            value = torch.exp(-0.5 * (i / sigma)**2)
+            value = torch.exp(-0.5 * torch.tensor(i / sigma, device=self.device)**2)
             kernel_1d[kernel_size // 2 - i] = value
             kernel_1d[kernel_size // 2 + i] = value
 
