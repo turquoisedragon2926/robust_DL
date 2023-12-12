@@ -3,6 +3,8 @@ import os
 import sys
 import torch
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from models.wideresnet import *
 from models.resnet import *
 from models.small_cnn import *

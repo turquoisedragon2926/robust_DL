@@ -39,14 +39,12 @@ def load_from_key(path, key):
     return None
 
 def save_to_key(path, key, value):
-    if not os.path.exists(path):
-        with open(path, 'w') as fp:
-            json.dump({}, fp)
-
-    with open(path, 'r') as fp:
-            dict = json.load(fp)
+    data = {}
+    if os.path.exists(path):
+        with open(path, 'r') as fp:
+            data = json.load(fp)
     
-    dict[key] = value
+    data[key] = value
 
     with open(path, 'w') as fp:
-        json.dump(dict, fp)
+        json.dump(data, fp)
