@@ -74,8 +74,8 @@ python3 main.py \
     --epochs $epochs \
     --valid_size $valid_size \
     --eval_interval $eval_interval \
-    --model_checkpoint $model_checkpoint \
-    --optimizer_checkpoint $optimizer_checkpoint \
+    $(if [ -n "$model_checkpoint" ]; then echo "--model_checkpoint $model_checkpoint"; fi) \
+    $(if [ -n "$optimizer_checkpoint" ]; then echo "--optimizer_checkpoint $optimizer_checkpoint"; fi) \
     --alpha $alpha \
     --severity $severity \
     --w_noise $w_noise \
