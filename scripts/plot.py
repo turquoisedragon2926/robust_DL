@@ -46,6 +46,8 @@ def main():
     robustness_accuracy_path = 'results/metrics/robustness_accuracy.json'
 
     total_robustness_accuracies = {}
+    total_natural_accuracies = {}
+
     for train_noise in train_noises:
         logger.log(f"EVAL STARTED FOR {train_noise} NOISE")
         severity_accuracies = {}
@@ -99,11 +101,15 @@ def main():
             severity_accuracies[severity] = severity_robustness_accuracies
 
         total_robustness_accuracies[train_noise] = robustness_accuracies
+        total_natural_accuracies[train_noise] = natural_accuracies
+
         configuration.id = get_config_id(args, disclude=['eval_noise'])
+
         plotter.plot_severity_vs_robustness(severities, natural_accuracies, robustness_accuracies, train_noise, plot_name=f"{configuration.id}_severity_vs_robustness.png")
         plotter.plot_eval_noise_bar_chart(eval_noises, severity_accuracies, train_noise, plot_name=f"{configuration.id}_noise_vs_robustness.png")
     
     plotter.plot_combined_severity_vs_robustness(severities, total_robustness_accuracies, train_noises, plot_name=f"{configuration.id}_combined_severity_vs_robustness.png")
+    plotter.plot_combined_severity_vs_robustness(severities, total_natural_accuracies, train_noises, plot_name=f"{configuration.id}_combined_severity_vs_natural.png", robust=False)
 
 if __name__ == "__main__":
     main()
