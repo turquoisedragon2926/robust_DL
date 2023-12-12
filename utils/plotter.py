@@ -63,7 +63,7 @@ class Plotter:
         # Plot natural accuracies
         plt.plot(severities, natural_accuracies, marker='s', linestyle='--', color='green', label='Natural Accuracy')
         # Plot robustness accuracies
-        plt.plot(severities, robustness_accuracies, marker='o', linestyle='-', color='blue', label=f'Average Robustness Accuracy ({train_noise} Noise)')
+        plt.plot(severities, robustness_accuracies, marker='o', linestyle='-', color='blue', label=f'Average Robustness Accuracy')
         plt.title(f'Severity vs Accuracy for {train_noise} Noise')
         plt.xlabel('Severity')
         plt.ylabel('Accuracy')
