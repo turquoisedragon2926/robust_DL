@@ -72,29 +72,32 @@ def main():
                 logger.log(f"ON EVALUATION NOISE = {eval_noise}")
 
                 if eval_noise == 'none':
-                    natural_accuracy = load_from_key(natural_accuracy_path, config_id)
+                    natural_accuracy = load_from_key(natural_accuracy_path, configuration.id)
                     if natural_accuracy is None:
                         natural_accuracy = accuracy(configuration, device)
-                        save_to_key(natural_accuracy_path, config_id, natural_accuracy)
+                        save_to_key(natural_accuracy_path, configuration.id, natural_accuracy)
                     natural_accuracies.append(natural_accuracy)
                     severity_robustness_accuracies.append(natural_accuracy)
                     continue
 
                 cifar10c_attack_loader = data_loader.get_cifar10c_attack_loader(eval_noise)
+                args.eval_noise = eval_noise
+                configuration.id = get_config_id(args)
 
                 # Load up the new evaluation data
                 cifar10_c_data.attack_loader = cifar10c_attack_loader
                 configuration.data = cifar10_c_data
 
-                robustness_accuracy = load_from_key(robustness_accuracy_path, config_id)
+                robustness_accuracy = load_from_key(robustness_accuracy_path, configuration.id)
                 if robustness_accuracy is None:
                     robustness_accuracy = robust_accuracy(configuration, device)
-                    save_to_key(robustness_accuracy_path, config_id, robustness_accuracy)
+                    save_to_key(robustness_accuracy_path, configuration.id, robustness_accuracy)
                 severity_robustness_accuracies.append(robustness_accuracy)
 
             robustness_accuracies.append(sum(severity_robustness_accuracies) / len(severity_robustness_accuracies))
             severity_accuracies[severity] = severity_robustness_accuracies
 
+        configuration.id = get_config_id(args, disclude=['eval_noise'])
         plotter.plot_severity_vs_robustness(severities, natural_accuracies, robustness_accuracies, train_noise, plot_name=f"{configuration.id}_severity_vs_robustness.png")
         plotter.plot_eval_noise_bar_chart(eval_noises, severity_accuracies, train_noise, plot_name=f"{configuration.id}_noise_vs_robustness.png")
 

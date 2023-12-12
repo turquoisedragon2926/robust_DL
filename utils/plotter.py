@@ -63,7 +63,7 @@ class Plotter:
         # Plot natural accuracies
         plt.plot(severities, natural_accuracies, marker='s', linestyle='--', color='green', label='Natural Accuracy')
         # Plot robustness accuracies
-        plt.plot(severities, robustness_accuracies, marker='o', linestyle='-', color='blue', label=f'Robustness Accuracy ({train_noise} Noise)')
+        plt.plot(severities, robustness_accuracies, marker='o', linestyle='-', color='blue', label=f'Average Robustness Accuracy ({train_noise} Noise)')
         plt.title(f'Severity vs Accuracy for {train_noise} Noise')
         plt.xlabel('Severity')
         plt.ylabel('Accuracy')
@@ -95,7 +95,7 @@ class Plotter:
         plt.title(f'Accuracy by Eval Noise and Severity for {train_noise} Noise')
 
         # Rotate the x-axis labels to avoid overlapping
-        plt.xticks(index + bar_width / 2, eval_noises, rotation=90, ha='center')
+        plt.xticks(index + bar_width / 2, eval_noises, rotation=45, ha='center')
 
         plt.legend()
 
