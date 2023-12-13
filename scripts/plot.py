@@ -35,7 +35,7 @@ def main():
     train_noises = ["gaussian", "uniform"] # , "shot", "blur", "random"]
     eval_noises = ["none", "saturate.npy"] #, "spatter.npy", "gaussian_blur.npy", "speckle_noise.npy", "jpeg_compression.npy", "pixelate.npy", "elastic_transform.npy", "contrast.npy", "brightness.npy", "fog.npy", "frost.npy", "snow.npy", "zoom_blur.npy", "motion_blur.npy", "defocus_blur.npy", "impulse_noise.npy", "shot_noise.npy", "gaussian_noise.npy"]
     severities = [0.05, 0.1] #, 0.25, 0.5, 0.75, 1.0]
-
+# results/models/model_type=alexnet_loss_type=adaptive_train_noise=gaussian_eval_noise=saturate.npy_epochs=50_valid_size=0.2_eval_interval=1_alpha=2.0_severity=0.1_w_noise=0.1_tau1=10_tau2=-10.pt
     if args.model_type == 'alexnet':
         model = AlexNet().to(device)
     else:
@@ -84,6 +84,9 @@ def main():
                     continue
 
                 cifar10c_attack_loader = data_loader.get_cifar10c_attack_loader(eval_noise)
+
+                # Change noise to save properly in json
+                default_noise = args.eval_noise
                 args.eval_noise = eval_noise
                 configuration.id = get_config_id(args)
 
@@ -96,6 +99,7 @@ def main():
                     robustness_accuracy = robust_accuracy(configuration, device)
                     save_to_key(robustness_accuracy_path, configuration.id, robustness_accuracy)
                 severity_robustness_accuracies.append(robustness_accuracy)
+                args.eval_noise = default_noise
 
             robustness_accuracies.append(sum(severity_robustness_accuracies) / len(severity_robustness_accuracies))
             severity_accuracies[severity] = severity_robustness_accuracies
