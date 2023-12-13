@@ -155,7 +155,7 @@ class Plotter:
                     severity = severities[index]
                     robust_accuracy = robustness_accuracies[train_noise][index]
                     plt.scatter(natural_accuracy, robust_accuracy)
-                    plt.annotate(f'{train_noise}, Severity {severity}', (natural_accuracy, robust_accuracy))
+                    plt.annotate(f'{train_noise}, {severity}', (natural_accuracy, robust_accuracy))
 
         plt.title('Tradeoff in Natural Accuracy vs Average Robustness Accuracy')
         plt.xlabel('Natural Accuracy')
