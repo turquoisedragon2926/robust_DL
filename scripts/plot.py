@@ -101,7 +101,8 @@ def main():
                 severity_robustness_accuracies.append(robustness_accuracy)
                 args.eval_noise = default_noise
 
-            robustness_accuracies.append(sum(severity_robustness_accuracies) / len(severity_robustness_accuracies))
+            # Disclude natural accuracy from this
+            robustness_accuracies.append(sum(severity_robustness_accuracies[1:]) / len(severity_robustness_accuracies[1:]))
             severity_accuracies[severity] = severity_robustness_accuracies
 
         total_robustness_accuracies[train_noise] = robustness_accuracies
