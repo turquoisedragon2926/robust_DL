@@ -137,6 +137,33 @@ class Plotter:
         plt.savefig(os.path.join(self.plot_dir, f'{train_noise}_{plot_name}'))
         plt.close()
 
+    def plot_tradeoff(self, severities, natural_accuracies, robustness_accuracies, plot_name='tradeoff.png'):
+        """
+        Plots a Pareto frontier where we measure tradeoff in natural accuracy vs average robustness accuracy, 
+        and each point represents a model.
+        :param severities: List of severities.
+        :param natural_accuracies: Dictionary with keys as train_noise the model was trained on and natural accuracy for each severity as a list.
+        :param robustness_accuracies: Dictionary with keys as train_noise the model was trained on and average robustness accuracy for each severity as a list.
+        :param plot_name: Filename for the saved plot.
+        """
+
+        plt.figure(figsize=(10, 7))
+
+        for train_noise, severities_natural_accuracies in natural_accuracies.items():
+            for severity, natural_accuracy in enumerate(severities_natural_accuracies):
+                if train_noise in robustness_accuracies and len(robustness_accuracies[train_noise]) > severity:
+                    robust_accuracy = robustness_accuracies[train_noise][severity]
+                    plt.scatter(natural_accuracy, robust_accuracy, label=f'{train_noise}, Severity {severity}')
+                    plt.annotate(f'{train_noise}, {severity}', (natural_accuracy, robust_accuracy))
+
+        plt.title('Tradeoff in Natural Accuracy vs Average Robustness Accuracy')
+        plt.xlabel('Natural Accuracy')
+        plt.ylabel('Robustness Accuracy')
+        plt.legend()
+        plt.grid(True)
+        plt.savefig(os.path.join(self.plot_dir, plot_name))
+        plt.close()
+
 # Example usage
 if __name__ == "__main__":
     plotter = Plotter()
