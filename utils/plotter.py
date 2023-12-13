@@ -153,7 +153,7 @@ class Plotter:
             for severity, natural_accuracy in enumerate(severities_natural_accuracies):
                 if train_noise in robustness_accuracies and len(robustness_accuracies[train_noise]) > severity:
                     robust_accuracy = robustness_accuracies[train_noise][severity]
-                    plt.scatter(natural_accuracy, robust_accuracy, label=f'{train_noise}, Severity {severity}')
+                    plt.scatter(natural_accuracy, robust_accuracy, label=f'{train_noise}, Severity {severities[severity]}')
                     plt.annotate(f'{train_noise}, {severity}', (natural_accuracy, robust_accuracy))
 
         plt.title('Tradeoff in Natural Accuracy vs Average Robustness Accuracy')
