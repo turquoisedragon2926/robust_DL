@@ -140,7 +140,7 @@ class Plotter:
     def plot_tradeoff(self, severities, natural_accuracies, robustness_accuracies, plot_name='tradeoff.png'):
         """
         Plots a Pareto frontier where we measure tradeoff in natural accuracy vs average robustness accuracy, 
-        and each point represents a model.
+        and each point represents a model, labeled with train_noise and the corresponding severity.
         :param severities: List of severities.
         :param natural_accuracies: Dictionary with keys as train_noise the model was trained on and natural accuracy for each severity as a list.
         :param robustness_accuracies: Dictionary with keys as train_noise the model was trained on and average robustness accuracy for each severity as a list.
@@ -150,16 +150,16 @@ class Plotter:
         plt.figure(figsize=(10, 7))
 
         for train_noise, severities_natural_accuracies in natural_accuracies.items():
-            for severity, natural_accuracy in enumerate(severities_natural_accuracies):
-                if train_noise in robustness_accuracies and len(robustness_accuracies[train_noise]) > severity:
-                    robust_accuracy = robustness_accuracies[train_noise][severity]
-                    plt.scatter(natural_accuracy, robust_accuracy, label=f'{train_noise}, Severity {severities[severity]}')
-                    plt.annotate(f'{train_noise}, {severity}', (natural_accuracy, robust_accuracy))
+            for index, natural_accuracy in enumerate(severities_natural_accuracies):
+                if train_noise in robustness_accuracies and len(robustness_accuracies[train_noise]) > index:
+                    severity = severities[index]
+                    robust_accuracy = robustness_accuracies[train_noise][index]
+                    plt.scatter(natural_accuracy, robust_accuracy)
+                    plt.annotate(f'{train_noise}, Severity {severity}', (natural_accuracy, robust_accuracy))
 
         plt.title('Tradeoff in Natural Accuracy vs Average Robustness Accuracy')
         plt.xlabel('Natural Accuracy')
         plt.ylabel('Robustness Accuracy')
-        plt.legend()
         plt.grid(True)
         plt.savefig(os.path.join(self.plot_dir, plot_name))
         plt.close()
