@@ -74,6 +74,38 @@ class BlurNoise(NoiseFunction):
         noise_norm = linalg.vector_norm(noise, dim=(1,2,3)).reshape((-1,1))
 
         return blurred_data, noise_norm
+    
+class RandomBlurNoise(NoiseFunction):
+    def add_noise(self, data):
+        # Define a 5x5 Gaussian blur kernel
+        kernel_size = 5
+        sigma = self.severity
+
+        # Create a 1D Gaussian kernel
+        kernel_1d = torch.tensor([.9], device=self.device).new_full((kernel_size,), .9)
+        for i in range(1, (kernel_size // 2) + 1):
+            value = torch.exp(-0.5 * torch.tensor(i / sigma, device=self.device)**2)
+            kernel_1d[kernel_size // 2 - i] = value
+            kernel_1d[kernel_size // 2 + i] = value
+
+        # Normalize the kernel so that it sums to one
+        kernel_1d = kernel_1d / kernel_1d.sum()
+
+        # Create a 2D Gaussian kernel from the 1D kernel
+        kernel_2d = kernel_1d[:, None] * kernel_1d[None, :]
+
+        # Add channel dimension
+        kernel_2d = kernel_2d.expand(data.size(1), 1, kernel_size, kernel_size)
+
+        # Apply padding to maintain the size
+        padding = kernel_size // 2
+
+        # Apply the Gaussian blur filter
+        blurred_data = F.conv2d(data, kernel_2d, padding=padding, groups=data.size(1))
+        noise = blurred_data - data
+        noise_norm = linalg.vector_norm(noise, dim=(1,2,3)).reshape((-1,1))
+
+        return blurred_data, noise_norm
 
 class NoiseFunctionFactory:
     @staticmethod
