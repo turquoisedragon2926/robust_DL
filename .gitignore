@@ -1,8 +1,5 @@
-TRADES/
 *.tar
 *.pt
 *.txt
-plots/
-weights/
-optimizers/
 notes.md
+results/

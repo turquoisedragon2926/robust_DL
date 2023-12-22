@@ -10,8 +10,6 @@ def train(configuration, args, device):
   logger.log('TRAINING')
 
   data_loader = configuration.data.train_loader
-  valid_loader = configuration.data.valid_loader
-  attack_loader = configuration.data.attack_loader
 
   configuration.model.to(device)
   best_eval_acc = 0.0
@@ -23,7 +21,7 @@ def train(configuration, args, device):
   epoch_losses = []
   eval_accuracies = []
 
-  plotter = Plotter("results/plots")
+  plotter = Plotter("results/plots/train")
   for epoch in range(1, args.epochs+1):
 
     configuration.model.train()
@@ -46,7 +44,7 @@ def train(configuration, args, device):
     epoch_losses.append(total_loss / len(data_loader))
 
     if epoch == 1 or epoch % args.eval_interval == 0 or epoch == args.epochs:
-      eval_acc= accuracy(configuration, device, valid=True)
+      eval_acc = accuracy(configuration, device, valid=True)
       eval_accuracies.append(eval_acc)
 
       if (eval_acc > best_eval_acc):  # best so far so save checkpoint to restore later
