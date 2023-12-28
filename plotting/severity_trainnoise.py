@@ -37,6 +37,8 @@ def main():
 
     if args.model_type == 'alexnet':
         model = AlexNet().to(device)
+    elif args.model_type == 'resnet18':
+        model = ResNet18().to(device)
     else:
        logger.log("MODEL TYPE NOT SUPPORTED")
        sys.exit(1)

@@ -52,6 +52,7 @@ def main():
     data = Data(train_loader, valid_loader, test_loader, attack_loader)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+    # TODO: Abstract this so all plotting and main doesnt need to be changed everytime model is added
     if args.model_type == 'alexnet':
         model = AlexNet().to(device)
     elif args.model_type == 'resnet18':
