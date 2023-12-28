@@ -16,7 +16,7 @@ class DataLoaderFactory:
         self.pin_memory = pin_memory
 
     def get_data_loaders(self):
-        if self.eval_dataset == 'cifar10':
+        if self.train_dataset == 'cifar10':
             trainset, validset, testset = self.get_cifar10_datasets()
         else:
             raise "Not implemented"
