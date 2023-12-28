@@ -43,7 +43,7 @@ class DataLoaderFactory:
         if self.eval_dataset == 'cifar10C':
             return self.get_cifar10c_attack_loader(eval_noise)
         elif self.eval_dataset == 'imagenetC':
-            return self.get_imagenetc_attack_loader(eval_noise)
+            return self.get_imagenetC_attack_loader(eval_noise)
         else:
             raise ValueError("Attack dataset not implemented")
 
@@ -80,7 +80,7 @@ class DataLoaderFactory:
 
         return trainset, validset, testset
     
-    def get_imagenetc_attack_loader(self, eval_noise):
+    def get_imagenetC_attack_loader(self, eval_noise):
         transform_imagenetc = transforms.Compose([
             # TODO: might need different transforms for ImageNet
             transforms.Resize(256),
