@@ -28,7 +28,7 @@ sbatch <<EOT
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-task=1
 #SBATCH --qos=regular
-#SBATCH --job-name ${mode_type}_${loss_type}_${eval_noise}_${epochs}
+#SBATCH --job-name ${mode_type}_${model_type}_${train_dataset}_${eval_dataset}_${loss_type}_${eval_noise}_${epochs}
 #SBATCH --mail-user=richardr2926@gmail.com
 #SBATCH --mail-type=ALL
 #SBATCH --time=0:30:00
@@ -46,6 +46,8 @@ module load pytorch/2.0.1
 python3 main.py \
     $(add_arg mode_type "$mode_type") \
     $(add_arg model_type "$model_type") \
+    $(add_arg train_dataset "$train_dataset") \
+    $(add_arg eval_dataset "$eval_dataset") \
     $(add_arg loss_type "$loss_type") \
     $(add_arg train_noise "$train_noise") \
     $(add_arg eval_noise "$eval_noise") \

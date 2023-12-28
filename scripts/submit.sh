@@ -9,6 +9,6 @@ fi
 
 for noise in "${noises[@]}"
 do
-    bash scripts/experiment.sh --mode_type eval --loss_type trades --eval_noise $noise --alpha 2 --epochs 50 --model_checkpoint "CIFARC10_Alexnet_TRADES_LOSS_BETA=0.5_EPOCHS=50.pt"
-    bash scripts/experiment.sh --mode_type eval --loss_type ce --eval_noise $noise --epochs 50 --model_checkpoint "CIFARC10_Alexnet_CE_LOSS_EPOCHS=50.pt"
+    bash scripts/experiment.sh --mode_type eval --train_dataset cifar10 --eval_dataset cifar10C --loss_type trades --eval_noise $noise --alpha 2 --epochs 50 --model_checkpoint "CIFARC10_Alexnet_TRADES_LOSS_BETA=0.5_EPOCHS=50.pt"
+    bash scripts/experiment.sh --mode_type eval --train_dataset cifar10 --eval_dataset cifar10C --loss_type ce --eval_noise $noise --epochs 50 --model_checkpoint "CIFARC10_Alexnet_CE_LOSS_EPOCHS=50.pt"
 done

@@ -6,12 +6,14 @@ module load conda
 conda activate robust_DL
 module load pytorch/2.0.1
 
-python3 scripts/plot.py \
+python3 plotting/severity_trainnoise.py \
     --mode_type train \
     --model_type alexnet \
+    --train_dataset cifar10 \
+    --eval_dataset cifar10C \
     --loss_type adaptive \
     --eval_noise gaussian_noise.npy \
-    --epochs 50 \
+    --epochs 2 \
     --valid_size 0.2 \
     --eval_interval 1 \
     --w_noise 0.1 \

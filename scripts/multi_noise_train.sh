@@ -5,6 +5,8 @@ for train_noise in "${train_noises[@]}"; do
     for severity in "${severities[@]}"; do
         bash scripts/experiment.sh \
             --mode_type train \
+            --train_dataset cifar10 \
+            --eval_dataset cifar10C \
             --model_type alexnet \
             --loss_type adaptive \
             --train_noise $train_noise \
