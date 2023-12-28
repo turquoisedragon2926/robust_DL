@@ -1,5 +1,5 @@
-models=('alexnet', 'resnet18')
-losses=('adaptive', 'ce', 'trades')
+models=("alexnet" "resnet18")
+losses=("adaptive" "ce" "trades")
 
 module load conda
 conda activate robust_DL
