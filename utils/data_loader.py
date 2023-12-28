@@ -17,7 +17,7 @@ class DataLoaderFactory:
 
     def get_data_loaders(self):
         if self.train_dataset == 'cifar10':
-            trainset, validset, testset = self.get_cifar10_datasets()
+            trainset, validset, testset = self.get_cifar10_loaders()
         else:
             raise "Not implemented"
 
