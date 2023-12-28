@@ -37,9 +37,9 @@ class DataLoaderFactory:
 
         return train_loader, valid_loader, test_loader
 
-    def get_attack_loader(self):
+    def get_attack_loader(self, eval_noise):
         if self.eval_dataset == 'cifar10C':
-            return self.get_cifar10c_attack_loader()
+            return self.get_cifar10c_attack_loader(eval_noise)
 
     def get_cifar10c_attack_loader(self, eval_noise):
 
