@@ -10,8 +10,8 @@ for loss in "${losses[@]}"; do
         python3 main.py \
             --mode_type train \
             --model_type $model \
-            --train_dataset cifar10 \
-            --eval_dataset cifar10C \
+            --train_dataset imagenet \
+            --eval_dataset imagenetC \
             --loss_type $loss \
             --train_noise blur \
             --eval_noise gaussian_noise.npy \

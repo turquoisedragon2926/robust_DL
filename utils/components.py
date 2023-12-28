@@ -20,7 +20,7 @@ class Configuration:
   def getId(self):
     return self.id
   
-class CIFAR10CDataset(Dataset):
+class AttackDataset(Dataset):
     def __init__(self, data, labels, transform=None):
         self.data = data
         self.labels = labels
