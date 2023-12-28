@@ -103,7 +103,7 @@ class Plotter:
         plt.savefig(os.path.join(self.plot_dir, plot_name))
         plt.close()
 
-    def plot_eval_noise_bar_chart(self, eval_noises, severity_accuracies, train_noise, plot_name='eval_noise_bar_chart.png'):
+    def plot_eval_noise_bar_chart(self, eval_noises, severity_accuracies, train_noise, plot_name='eval_noise_bar_chart.png', metric="Severity"):
         """
         Bar plot where x axis is the eval noise and for each eval noise, there are bars for each severity.
         :param eval_noises: List of evaluation noises.
@@ -119,11 +119,11 @@ class Plotter:
         opacity = 0.8
         
         for i, severity in enumerate(sorted(severity_accuracies.keys())):
-            plt.bar(index + i * bar_width, severity_accuracies[severity], bar_width, alpha=opacity, label=f'Severity {severity}')
+            plt.bar(index + i * bar_width, severity_accuracies[severity], bar_width, alpha=opacity, label=f'{metric} {severity}')
 
         plt.xlabel('Eval Noise')
         plt.ylabel('Accuracy')
-        plt.title(f'Accuracy by Eval Noise and Severity for {train_noise} Noise')
+        plt.title(f'Accuracy by Eval Noise and {metric} for {train_noise} Noise')
 
         # Rotate the x-axis labels to avoid overlapping
         plt.xticks(index + bar_width / 2, eval_noises, rotation=45, ha='center')

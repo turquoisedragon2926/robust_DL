@@ -111,11 +111,11 @@ def main():
 
         configuration.id = get_config_id(args, disclude=['eval_noise'])
 
-        plotter.plot_severity_vs_robustness(loss_types, natural_accuracies, robustness_accuracies, model_type, plot_name=f"{configuration.id}_md_severity_vs_robustness.png")
-        plotter.plot_eval_noise_bar_chart(eval_noises, loss_type_accuracies, model_type, plot_name=f"{configuration.id}_md_noise_vs_robustness.png")
+        # plotter.plot_severity_vs_robustness(loss_types, natural_accuracies, robustness_accuracies, model_type, plot_name=f"{configuration.id}_md_severity_vs_robustness.png")
+        plotter.plot_eval_noise_bar_chart(eval_noises, loss_type_accuracies, model_type, plot_name=f"{configuration.id}_md_noise_vs_robustness.png", metric="Loss Type")
     
-    plotter.plot_combined_severity_vs_robustness(loss_types, total_robustness_accuracies, model_types, plot_name=f"{configuration.id}_md_combined_severity_vs_robustness.png")
-    plotter.plot_combined_severity_vs_robustness(loss_types, total_natural_accuracies, model_types, plot_name=f"{configuration.id}_md_combined_severity_vs_natural.png", robust=False)
+    # plotter.plot_combined_severity_vs_robustness(loss_types, total_robustness_accuracies, model_types, plot_name=f"{configuration.id}_md_combined_severity_vs_robustness.png")
+    # plotter.plot_combined_severity_vs_robustness(loss_types, total_natural_accuracies, model_types, plot_name=f"{configuration.id}_md_combined_severity_vs_natural.png", robust=False)
 
     plotter.plot_tradeoff(loss_types, total_natural_accuracies, total_robustness_accuracies, plot_name=f"{configuration.id}_md_tradeoff.png")
 
