@@ -9,10 +9,10 @@ for loss in "${losses[@]}"; do
     for model in "${models[@]}"; do
         python3 main.py \
             --mode_type train \
-            --model_type alexnet \
+            --model_type $model \
             --train_dataset cifar10 \
             --eval_dataset cifar10C \
-            --loss_type adaptive \
+            --loss_type $loss \
             --train_noise blur \
             --eval_noise gaussian_noise.npy \
             --epochs 2 \
