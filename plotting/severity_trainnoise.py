@@ -26,9 +26,8 @@ def main():
     logger = Logger.get_instance()
     plotter = Plotter('results/plots/eval')
 
-
-    data_loader = DataLoaderFactory(root='data', valid_size=args.valid_size)
-    train_loader, valid_loader, test_loader = data_loader.get_cifar10_loaders()
+    data_loader = DataLoaderFactory(root='data', valid_size=args.valid_size, train_dataset=args.train_dataset, eval_dataset=args.eval_dataset)
+    train_loader, valid_loader, test_loader = data_loader.get_data_loaders()
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -38,6 +37,8 @@ def main():
 
     if args.model_type == 'alexnet':
         model = AlexNet().to(device)
+    elif args.model_type == 'resnet18':
+        model = ResNet18().to(device)
     else:
        logger.log("MODEL TYPE NOT SUPPORTED")
        sys.exit(1)
@@ -65,8 +66,8 @@ def main():
             model_pt = os.path.join("results", "models", f"{config_id}.pt")
             model.load_state_dict(torch.load(model_pt))
 
-            cifar10_c_data = Data(train_loader, valid_loader, test_loader, None)
-            configuration = Configuration(cifar10_c_data, model, None, None, identity_attack, config_id)
+            data = Data(train_loader, valid_loader, test_loader, None)
+            configuration = Configuration(data, model, None, None, identity_attack, config_id)
 
             # Initialize a list to keep track of all robustness_accuracies for this severity across eval_noises
             severity_robustness_accuracies = []
@@ -83,7 +84,7 @@ def main():
                     severity_robustness_accuracies.append(natural_accuracy)
                     continue
 
-                cifar10c_attack_loader = data_loader.get_cifar10c_attack_loader(eval_noise)
+                attack_loader = data_loader.get_attack_loader(eval_noise)
 
                 # Change noise to save properly in json
                 default_noise = args.eval_noise
@@ -91,8 +92,8 @@ def main():
                 configuration.id = get_config_id(args)
 
                 # Load up the new evaluation data
-                cifar10_c_data.attack_loader = cifar10c_attack_loader
-                configuration.data = cifar10_c_data
+                data.attack_loader = attack_loader
+                configuration.data = data
 
                 robustness_accuracy = load_from_key(robustness_accuracy_path, configuration.id)
                 if robustness_accuracy is None:
