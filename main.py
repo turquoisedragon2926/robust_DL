@@ -16,6 +16,7 @@ from models.small_cnn import *
 from models.AlexNet import AlexNet
 
 from attacks.identity import identity_attack
+from attacks.pgd import pgd_attack
 from utils.logger import Logger
 
 from utils.components import Configuration, Data
@@ -86,8 +87,13 @@ def main():
         logger.log("Loss Type not supported")
         sys.exit(1)
 
+    if args.attack_type == 'identity':
+        attack = identity_attack
+    elif args.attack_type == 'pgd':
+        attack = pgd_attack
+
     # Create Configuration instance
-    configuration = Configuration(data, model, optimizer, loss_fn, identity_attack, config_id)
+    configuration = Configuration(data, model, optimizer, loss_fn, attack, config_id)
 
     if args.mode_type == "train":
         final_loss, total_time = train(configuration, args, device)

@@ -45,6 +45,7 @@ module load pytorch/2.0.1
 
 python3 main.py \
     $(add_arg mode_type "$mode_type") \
+    $(add_arg attack_type "$attack_type") \
     $(add_arg model_type "$model_type") \
     $(add_arg train_dataset "$train_dataset") \
     $(add_arg eval_dataset "$eval_dataset") \

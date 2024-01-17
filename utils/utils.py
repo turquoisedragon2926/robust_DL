@@ -7,6 +7,7 @@ def parse_args():
 
     # Common Parameters
     parser.add_argument('--mode_type', type=str, default="train", choices=['eval', 'train'], help='Mode type: train or eval only')
+    parser.add_argument('--attack_type', type=str, default="identity", choices=['identity', 'pgd'], help='Attack type: identity or pgd only')
     parser.add_argument('--model_type', type=str, default="alexnet", choices=['alexnet', 'resnet18'], help='Model type: alexnet')
     parser.add_argument('--train_dataset', type=str, default="cifar10", choices=['cifar10', 'imagenet'], help='Training Dataset type (default: cifar10)')
     parser.add_argument('--eval_dataset', type=str, default="cifar10C", choices=['cifar10C', 'imagenetC'], help='Evaluation Dataset type (default: cifar10C)')

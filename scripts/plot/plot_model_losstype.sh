@@ -8,6 +8,7 @@ module load pytorch/2.0.1
 
 python3 plotting/model_losstype.py \
     --mode_type train \
+    --attack_type identity \
     --train_dataset imagenet \
     --eval_dataset imagenetC \
     --train_noise blur \

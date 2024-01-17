@@ -153,7 +153,8 @@ class NoiseFunctionFactory:
             'gaussian': GaussianNoise,
             'uniform': UniformNoise,
             'shot': ShotNoise,
-            'blur': BlurNoise
+            'blur': BlurNoise,
+            'dynamicBlur': DynamicBlurNoise
         }
         if train_noise == 'random':
             return random.choice(list(noise_classes.values()))(severity)

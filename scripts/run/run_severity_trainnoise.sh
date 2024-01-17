@@ -2,7 +2,7 @@
 # train_noises=("gaussian" "uniform" "shot" "blur" "random")
 
 severities=(0.05 0.1)
-train_noises=("gaussian" "random")
+train_noises=("dynamicBlur")
 
 module load conda
 conda activate robust_DL
@@ -12,6 +12,7 @@ for train_noise in "${train_noises[@]}"; do
     for severity in "${severities[@]}"; do
         python3 main.py \
             --mode_type train \
+            --attack_type pgd \
             --model_type alexnet \
             --train_dataset cifar10 \
             --eval_dataset cifar10C \
