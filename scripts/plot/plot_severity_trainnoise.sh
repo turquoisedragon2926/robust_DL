@@ -8,7 +8,7 @@ module load pytorch/2.0.1
 
 python3 plotting/severity_trainnoise.py \
     --mode_type train \
-    --attack_type identity \
+    --attack_type pgd \
     --model_type alexnet \
     --train_dataset cifar10 \
     --eval_dataset cifar10C \
