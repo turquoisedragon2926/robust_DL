@@ -12,7 +12,7 @@ def parse_args():
     parser.add_argument('--train_dataset', type=str, default="cifar10", choices=['cifar10', 'imagenet'], help='Training Dataset type (default: cifar10)')
     parser.add_argument('--eval_dataset', type=str, default="cifar10C", choices=['cifar10C', 'imagenetC'], help='Evaluation Dataset type (default: cifar10C)')
     parser.add_argument('--loss_type', type=str, default="adaptive", choices=['trades', 'adaptive', 'ce'], help='Loss type: trades or custom or ce')
-    parser.add_argument('--train_noise', type=str, default='gaussian', choices=['gaussian', 'uniform', 'shot', 'blur', 'random'], help='Type of noise to use while training (default: gaussian)')
+    parser.add_argument('--train_noise', type=str, default='gaussian', choices=['gaussian', 'uniform', 'shot', 'blur', 'random', 'dynamicBlur'], help='Type of noise to use while training (default: gaussian)')
     parser.add_argument('--eval_noise', type=str, default='gaussian_noise.npy', help='Type of noise (default: gaussian_noise.npy)')
     parser.add_argument('--epochs', type=int, default=50, help='Number of epochs (default: 50)')
     parser.add_argument('--valid_size', type=float, default=0.2, help='Validation dataset ratio')
