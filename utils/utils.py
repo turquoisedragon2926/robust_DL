@@ -31,7 +31,7 @@ def parse_args():
     
     return parser.parse_args()
 
-def get_config_id(args, default=['mode_type', 'model_checkpoint', 'optimizer_checkpoint'], disclude=[]):
+def get_config_id(args, default=['mode_type', 'attack_type', 'model_checkpoint', 'optimizer_checkpoint'], disclude=[]):
      return "_".join([f"{arg}={getattr(args, arg)}" for arg in vars(args) if arg not in default + disclude and getattr(args, arg) is not None])
 
 def load_from_key(path, key):
