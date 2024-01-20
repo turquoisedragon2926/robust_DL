@@ -108,7 +108,7 @@ def main():
                 robustness_accuracy = load_from_key(robustness_accuracy_path, configuration.id)
                 if robustness_accuracy is None:
                     robustness_accuracy = robust_accuracy(configuration, device)
-                    # print("Robustness accuracy after: ", robustness_accuracy)
+                    print("Robustness accuracy after: ", robustness_accuracy)
                     save_to_key(robustness_accuracy_path, configuration.id, robustness_accuracy)
                 alpha_robustness_accuracies.append(robustness_accuracy)
                 configuration.attack = attack
