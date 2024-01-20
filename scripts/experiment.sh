@@ -35,14 +35,6 @@ sbatch <<EOT
 #SBATCH --account=m3863_g
 #SBATCH --gpu-bind=none
 
-export SLURM_CPU_BIND="cores"
-export PATH=$PATH:$HOME/.julia/bin
-export LD_PRELOAD=/opt/cray/pe/lib64/libmpi_gtl_cuda.so.0
-
-module load conda
-conda activate robust_DL
-module load pytorch/2.0.1
-
 python3 main.py \
     $(add_arg mode_type "$mode_type") \
     $(add_arg attack_type "$attack_type") \

@@ -2,9 +2,9 @@
 # bc we eval for all severity and 
 # w_noise we have trained upon
 
-module load conda
-conda activate robust_DL
-module load pytorch/2.0.1
+# module load conda
+# conda activate robust_DL
+# module load pytorch/2.0.1
 
 python3 plotting/severity_trainnoise.py \
     --mode_type train \
