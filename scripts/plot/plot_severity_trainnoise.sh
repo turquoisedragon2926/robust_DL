@@ -38,7 +38,7 @@ python3 plotting/test_plot.py \
 
 # Plot Trades Test
 
-python3 plotting/test_plot.py \
+python3 plotting/trades_alpha.py \
     --mode_type train \
     --attack_type identity \
     --model_type alexnet \
