@@ -63,7 +63,7 @@ def main():
             args.train_noise = train_noise
             args.severity = severity
 
-            config_id = get_config_id(args)
+            config_id = get_config_id(args, disclude=[] if train_noise == 'dynamicBlur' else ["train_dataset", "eval_dataset"])
             model_pt = os.path.join("results", "models", f"{config_id}.pt")
             model.load_state_dict(torch.load(model_pt))
 
