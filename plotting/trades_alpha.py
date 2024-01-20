@@ -128,7 +128,7 @@ def main():
     plotter.plot_combined_severity_vs_robustness(alphas, total_robustness_accuracies, train_noises, plot_name=f"{configuration.id}_combined_alpha_vs_robustness.png")
     plotter.plot_combined_severity_vs_robustness(alphas, total_natural_accuracies, train_noises, plot_name=f"{configuration.id}_combined_alpha_vs_natural.png", robust=False)
 
-    plotter.plot_tradeoff(alphas, total_natural_accuracies, total_robustness_accuracies, plot_name=f"{configuration.id}_tradeoff.png")
+    plotter.plot_tradeoff(alphas, total_natural_accuracies, total_robustness_accuracies, plot_name=f"{configuration.id}_alpha_tradeoff.png")
 
 if __name__ == "__main__":
     main()
