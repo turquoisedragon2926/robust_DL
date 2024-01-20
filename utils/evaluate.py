@@ -33,6 +33,6 @@ def robust_accuracy(configuration, device):
 
         X, y = Variable(data, requires_grad=True), Variable(target)
         correct_count = configuration.attack(configuration.model, X, y)
-        correct += correct_count
+        correct += correct_count.item() if isinstance(correct_count, torch.Tensor) else correct_count
         total += target.size(0)
     return (100. * correct / total).cpu().item()
