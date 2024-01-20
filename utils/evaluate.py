@@ -35,4 +35,4 @@ def robust_accuracy(configuration, device):
         correct_count = configuration.attack(configuration.model, X, y)
         correct += correct_count
         total += target.size(0)
-    return 100. * correct / total
+    return (100. * correct / total).cpu().item()
