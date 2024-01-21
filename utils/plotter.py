@@ -50,7 +50,7 @@ class Plotter:
         plt.savefig(os.path.join(self.plot_dir, plot_name))
         plt.close()
 
-    def plot_severity_vs_robustness(self, severities, natural_accuracies, robustness_accuracies, train_noise, plot_name='severity_vs_robustness.png'):
+    def plot_severity_vs_robustness(self, severities, natural_accuracies, robustness_accuracies, train_noise, metric="Severity", plot_name='severity_vs_robustness.png'):
         """
         Plots severity vs natural and average robustness accuracy.
         :param severities: List of severities.
@@ -64,15 +64,15 @@ class Plotter:
         plt.plot(severities, natural_accuracies, marker='s', linestyle='--', color='green', label='Natural Accuracy')
         # Plot robustness accuracies
         plt.plot(severities, robustness_accuracies, marker='o', linestyle='-', color='blue', label=f'Average Robustness Accuracy')
-        plt.title(f'Severity vs Accuracy for {train_noise} Noise')
-        plt.xlabel('Severity')
+        plt.title(f'{metric} vs Accuracy for {train_noise} Noise')
+        plt.xlabel(f'{metric}')
         plt.ylabel('Accuracy')
         plt.legend()
         plt.grid(True)
         plt.savefig(os.path.join(self.plot_dir, f'{train_noise}_{plot_name}'))
         plt.close()
 
-    def plot_combined_severity_vs_robustness(self, severities, robustness_accuracies, train_noises, plot_name='combined_severity_vs_robustness.png', robust=True):
+    def plot_combined_severity_vs_robustness(self, severities, robustness_accuracies, train_noises, metric="Severity", plot_name='combined_severity_vs_robustness.png', robust=True):
         """
         Plots severity vs natural and average robustness accuracy for all train_noises.
         :param severities: List of severities.
@@ -95,8 +95,8 @@ class Plotter:
                 plt.plot(severities, robustness_accuracies[noise], marker='o', linestyle='-', label=f'{noise} Noise', color=colors[color_index])
                 color_index += 1
 
-        plt.title(f'Severity vs Average {"Robustness" if robust else "Natural"} Accuracy for Different Noises')
-        plt.xlabel('Severity')
+        plt.title(f'{metric} vs Average {"Robustness" if robust else "Natural"} Accuracy for Different Noises')
+        plt.xlabel(f'{metric}')
         plt.ylabel('Accuracy')
         plt.legend()
         plt.grid(True)

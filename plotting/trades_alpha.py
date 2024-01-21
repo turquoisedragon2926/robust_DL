@@ -33,7 +33,7 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     train_noises = ["gaussian"]
-    eval_noises = ["none", "adversarial", "saturate.npy"] #, "spatter.npy", "gaussian_blur.npy", "speckle_noise.npy", "jpeg_compression.npy", "pixelate.npy", "elastic_transform.npy", "contrast.npy", "brightness.npy", "fog.npy", "frost.npy", "snow.npy", "zoom_blur.npy", "motion_blur.npy", "defocus_blur.npy", "impulse_noise.npy", "shot_noise.npy", "gaussian_noise.npy"]
+    eval_noises = ["none", "adversarial", "saturate.npy", "spatter.npy", "gaussian_blur.npy", "speckle_noise.npy", "jpeg_compression.npy", "pixelate.npy", "elastic_transform.npy", "contrast.npy", "brightness.npy", "fog.npy", "frost.npy", "snow.npy", "zoom_blur.npy", "motion_blur.npy", "defocus_blur.npy", "impulse_noise.npy", "shot_noise.npy", "gaussian_noise.npy"]
     alphas = [0.1, 0.2, 0.5, 1.0, 1.5, 2.0]
 
     if args.model_type == 'alexnet':
@@ -122,11 +122,11 @@ def main():
 
         configuration.id = get_config_id(args, disclude=['eval_noise'])
 
-        plotter.plot_severity_vs_robustness(alphas, natural_accuracies, robustness_accuracies, train_noise, plot_name=f"{configuration.id}_alpha_vs_robustness.png")
-        plotter.plot_eval_noise_bar_chart(eval_noises, alpha_accuracies, train_noise, plot_name=f"{configuration.id}_noise_vs_robustness.png")
+        plotter.plot_severity_vs_robustness(alphas, natural_accuracies, robustness_accuracies, train_noise, plot_name=f"{configuration.id}_alpha_vs_robustness.png", metric="Alpha")
+        plotter.plot_eval_noise_bar_chart(eval_noises, alpha_accuracies, train_noise, plot_name=f"{configuration.id}_noise_vs_robustness.png", metric="Alpha")
     
-    plotter.plot_combined_severity_vs_robustness(alphas, total_robustness_accuracies, train_noises, plot_name=f"{configuration.id}_combined_alpha_vs_robustness.png")
-    plotter.plot_combined_severity_vs_robustness(alphas, total_natural_accuracies, train_noises, plot_name=f"{configuration.id}_combined_alpha_vs_natural.png", robust=False)
+    plotter.plot_combined_severity_vs_robustness(alphas, total_robustness_accuracies, train_noises, plot_name=f"{configuration.id}_combined_alpha_vs_robustness.png", metric="Alpha")
+    plotter.plot_combined_severity_vs_robustness(alphas, total_natural_accuracies, train_noises, plot_name=f"{configuration.id}_combined_alpha_vs_natural.png", robust=False, metric="Alpha")
 
     plotter.plot_tradeoff(alphas, total_natural_accuracies, total_robustness_accuracies, plot_name=f"{configuration.id}_alpha_tradeoff.png")
 
