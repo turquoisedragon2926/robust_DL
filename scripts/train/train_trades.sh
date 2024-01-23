@@ -9,7 +9,7 @@ for alpha in "${alphas[@]}"; do
         --model_type resnet18 \
         --loss_type trades \
         --eval_noise gaussian_noise.npy \
-        --epochs 50 \
+        --epochs 100 \
         --valid_size 0.2 \
         --eval_interval 1 \
         --alpha $alpha

@@ -64,7 +64,7 @@ def main():
 
     # Define our learnable noise model and the optimizer
     noise_model = nn.Sequential(nn.Linear(1,10, bias=True),nn.Sigmoid()).to(device)
-    optimizer = optim.SGD(list(model.parameters()) + list(noise_model.parameters()), lr=0.01, momentum=0.9)
+    optimizer = optim.SGD(list(model.parameters()) + list(noise_model.parameters()), lr=0.005, momentum=0.9)
 
     # Load checkpoints if needed
     if args.model_checkpoint is not None:

@@ -30,7 +30,7 @@ python3 plotting/test_plot.py \
     --eval_dataset cifar10C \
     --loss_type adaptive \
     --eval_noise gaussian_noise.npy \
-    --epochs 50 \
+    --epochs 100 \
     --valid_size 0.2 \
     --eval_interval 1 \
     --w_noise 0.1 \
@@ -46,7 +46,7 @@ python3 plotting/trades_alpha.py \
     --eval_dataset cifar10C \
     --loss_type trades \
     --eval_noise gaussian_noise.npy \
-    --epochs 50 \
+    --epochs 100 \
     --valid_size 0.2 \
     --eval_interval 1 \
     --w_noise 0.1 \

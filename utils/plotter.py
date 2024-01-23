@@ -133,6 +133,9 @@ class Plotter:
         # Adjust the subplot parameters to give the x-axis labels more space
         plt.subplots_adjust(bottom=0.15)
 
+        # Set y-axis limit
+        plt.ylim(0, 100)
+
         plt.grid(True)
         plt.savefig(os.path.join(self.plot_dir, f'{train_noise}_{plot_name}'))
         plt.close()
