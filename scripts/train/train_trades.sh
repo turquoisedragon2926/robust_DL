@@ -6,7 +6,7 @@ for alpha in "${alphas[@]}"; do
         --attack_type identity \
         --train_dataset cifar10 \
         --eval_dataset cifar10C \
-        --model_type alexnet \
+        --model_type resnet18 \
         --loss_type trades \
         --eval_noise gaussian_noise.npy \
         --epochs 50 \
