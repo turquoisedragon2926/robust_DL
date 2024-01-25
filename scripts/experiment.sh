@@ -49,6 +49,7 @@ python3 main.py \
     $(add_arg eval_interval "$eval_interval") \
     $(add_arg model_checkpoint "$model_checkpoint") \
     $(add_arg optimizer_checkpoint "$optimizer_checkpoint") \
+    $(add_arg lr "$lr") \
     $(add_arg alpha "$alpha") \
     $(add_arg severity "$severity") \
     $(add_arg w_noise "$w_noise") \
