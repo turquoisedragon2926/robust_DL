@@ -15,8 +15,8 @@ for train_noise in "${train_noises[@]}"; do
             --epochs 100 \
             --valid_size 0.2 \
             --eval_interval 1 \
-            --severity $severity \
-            --w_noise $w_noise \
+            --severity "$severity" \
+            --w_noise "$w_noise" \
             --tau1 10
     done
 done
