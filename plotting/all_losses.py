@@ -202,7 +202,7 @@ def main():
         "ADAPTIVE": {
             "x": total_natural_accuracies['adaptive'],
             "y": adaptive_adversarial_accuracies,
-            "keys": w_noise
+            "keys": w_noises
         }
     }
 
@@ -215,7 +215,7 @@ def main():
         "ADAPTIVE": {
             "x": total_natural_accuracies['adaptive'],
             "y": total_robustness_accuracies['adaptive'],
-            "keys": w_noise
+            "keys": w_noises
         }
     }
 
