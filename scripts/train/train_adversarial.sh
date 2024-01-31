@@ -1,4 +1,4 @@
-lrs=(0.005 0.01 0.03 0.05)
+lrs=(0.05 0.1)
 
 for lr in "${lrs[@]}"; do
     bash scripts/experiment.sh \
