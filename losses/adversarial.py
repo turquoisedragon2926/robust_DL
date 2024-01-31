@@ -11,11 +11,10 @@ def l2_norm(x):
     return squared_l2_norm(x).sqrt()
 
 def adversarial_loss(model, x_natural, y, optimizer, step_size=0.003, epsilon=0.031, perturb_steps=10, distance='l_inf'):
-    # Make sure the model is in evaluation mode to freeze batch norm layers, etc.
     model.eval()
 
-    # Start with a copy of the original data
-    x_adv = Variable(x_natural.data, requires_grad=True)
+    # Clone the input data and require gradient computation
+    x_adv = x_natural.clone().detach().requires_grad_(True)
 
     for _ in range(perturb_steps):
         output = model(x_adv)
@@ -31,11 +30,11 @@ def adversarial_loss(model, x_natural, y, optimizer, step_size=0.003, epsilon=0.
             # Clip x_adv to be within epsilon of x_natural, ensuring it stays within the valid data range
             x_adv = torch.min(torch.max(x_adv, x_natural - epsilon), x_natural + epsilon).clamp(0, 1.0)
 
-        # Reset gradients
+        # Zero out gradients for the next iteration
+        model.zero_grad()
         x_adv.grad.data.zero_()
 
-    # Calculate final loss
-    model.train()  # Reset model to training mode
+    model.train()
     x_adv = Variable(x_adv.data, requires_grad=False)
     adv_output = model(x_adv)
     loss_adv = F.cross_entropy(adv_output, y)
