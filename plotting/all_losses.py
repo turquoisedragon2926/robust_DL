@@ -35,7 +35,7 @@ def main():
     eval_noises = ["none", "adversarial", "saturate.npy", "spatter.npy", "gaussian_blur.npy", "speckle_noise.npy", "jpeg_compression.npy", "pixelate.npy", "elastic_transform.npy", "contrast.npy", "brightness.npy", "fog.npy", "frost.npy", "snow.npy", "zoom_blur.npy", "motion_blur.npy", "defocus_blur.npy", "impulse_noise.npy", "shot_noise.npy", "gaussian_noise.npy"]
 
     w_noises = [0.05, 0.1, 0.25, 0.5, 0.75, 1.0]
-    alphas = [0.1, 0.25, 0.5, 1.0, 2.0, 3.0]
+    alphas = reversed([0.1, 0.25, 0.5, 1.0, 2.0, 3.0]) # We want betas to be increasing
 
     if args.model_type == 'alexnet':
         model = AlexNet().to(device)
