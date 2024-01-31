@@ -181,23 +181,47 @@ def main():
 
     configuration.id = get_config_id(args, disclude=['eval_noise'])
 
-    # Prepare the data for plotting
-    alpha_accuracies = {
-        'Adversarial Accuracy (TRADES)': trades_adversarial_accuracies,  # Assuming this is a list of accuracies for each alpha
-        'Natural Accuracy (TRADES)': total_natural_accuracies['trades'],  # List of natural accuracies for each alpha
-        'Average Robustness Accuracy (TRADES)': total_robustness_accuracies['trades']  # List of robustness accuracies for each alpha
-    }
-    w_noise_accuracies = {
-        'Adversarial Accuracy (Adaptive)': adaptive_adversarial_accuracies,  # Assuming this is a list of accuracies for each w_noise
-        'Natural Accuracy (Adaptive)': total_natural_accuracies['adaptive'],  # List of natural accuracies for each w_noise
-        'Average Robustness Accuracy (Adaptive)': total_robustness_accuracies['adaptive']  # List of robustness accuracies for each w_noise
+    # # Prepare the data for plotting to use with plot_accuracy_vs_parameters in Plotter
+    # alpha_accuracies = {
+    #     'Adversarial Accuracy (TRADES)': trades_adversarial_accuracies,  # Assuming this is a list of accuracies for each alpha
+    #     'Natural Accuracy (TRADES)': total_natural_accuracies['trades'],  # List of natural accuracies for each alpha
+    #     'Average Robustness Accuracy (TRADES)': total_robustness_accuracies['trades']  # List of robustness accuracies for each alpha
+    # }
+    # w_noise_accuracies = {
+    #     'Adversarial Accuracy (Adaptive)': adaptive_adversarial_accuracies,  # Assuming this is a list of accuracies for each w_noise
+    #     'Natural Accuracy (Adaptive)': total_natural_accuracies['adaptive'],  # List of natural accuracies for each w_noise
+    #     'Average Robustness Accuracy (Adaptive)': total_robustness_accuracies['adaptive']  # List of robustness accuracies for each w_noise
+    # }
+
+    adversarial_accuracies_to_plot = {
+        "TRADES": {
+            "x": total_natural_accuracies['trades'],
+            "y": trades_adversarial_accuracies,
+            "keys": alphas
+        },
+        "ADAPTIVE": {
+            "x": total_natural_accuracies['adaptive'],
+            "y": adaptive_adversarial_accuracies,
+            "keys": w_noise
+        }
     }
 
-    print(alpha_accuracies)
-    print(w_noise_accuracies)
+    robustness_accuracies_to_plot = {
+        "TRADES": {
+            "x": total_natural_accuracies['trades'],
+            "y": total_robustness_accuracies['trades'],
+            "keys": alphas
+        },
+        "ADAPTIVE": {
+            "x": total_natural_accuracies['adaptive'],
+            "y": total_robustness_accuracies['adaptive'],
+            "keys": w_noise
+        }
+    }
 
     # Call the new plotting function
-    plotter.plot_accuracy_vs_parameters(alpha_accuracies, w_noise_accuracies, alphas, w_noises, plot_name=f"{configuration.id}_accuracy_vs_parameters.png")
+    plotter.plot_accuracy_vs_accuracy(adversarial_accuracies_to_plot, plot_name=f"{configuration.id}_adversarial_vs_accuracy.png", y_axis="Adversarial Accuracy")
+    plotter.plot_accuracy_vs_accuracy(robustness_accuracies_to_plot, plot_name=f"{configuration.id}_robustness_vs_accuracy.png", y_axis="Average Robustness Accuracy")
 
 if __name__ == "__main__":
     main()

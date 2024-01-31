@@ -216,6 +216,31 @@ class Plotter:
         plt.savefig(os.path.join(self.plot_dir, plot_name))
         plt.close()
 
+    def plot_accuracy_vs_accuracy(self, accuracies_to_plot, plot_name, y_axis):
+        """
+        Generates a plot of natural accuracy vs specified y-axis accuracy.
+        Each key forms a line in the tradeoff graph with points labeled (KEY, keys[point no]).
+        :param accuracies_to_plot: Dictionary with keys representing model types and values being another dictionary with 'x', 'y', and 'keys'.
+        :param plot_name: Filename for the saved plot.
+        :param y_axis: Label for the y-axis.
+        """
+
+        plt.figure(figsize=(10, 7))
+        colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']  # Basic color codes for differentiation
+
+        for index, (key, data) in enumerate(accuracies_to_plot.items()):
+            color = colors[index % len(colors)]  # Cycle through colors
+            for x_val, y_val, label in zip(data['x'], data['y'], data['keys']):
+                plt.scatter(x_val, y_val, color=color)
+                plt.annotate(f'({key}, {label})', (x_val, y_val), textcoords="offset points", xytext=(0,10), ha='center')
+
+        plt.title(f'Natural Accuracy vs {y_axis}')
+        plt.xlabel('Natural Accuracy')
+        plt.ylabel(y_axis)
+        plt.grid(True)
+        plt.savefig(os.path.join(self.plot_dir, plot_name))
+        plt.close()
+
 # Example usage
 if __name__ == "__main__":
     plotter = Plotter()
