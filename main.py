@@ -9,6 +9,7 @@ import torch.optim as optim
 from losses.trades import trades_loss
 from losses.ce import ce_loss
 from losses.adaptive import adaptive_loss
+from losses.adversarial import adversarial_loss
 
 from models.wideresnet import *
 from models.resnet import *
@@ -24,6 +25,12 @@ from utils.data_loader import DataLoaderFactory
 from utils.train import train
 from utils.evaluate import accuracy, robust_accuracy
 from utils.utils import save_to_key, parse_args, get_config_id
+
+def general_adversarial_loss_fn(epsilon=0.3, step_size=0.007, num_steps=10):
+  def adversarial_loss_fn(model, data, target, optimizer):
+    return adversarial_loss(model=model, x_natural=data, y=target, optimizer=optimizer, step_size=step_size,
+                      epsilon=epsilon, perturb_steps=num_steps, distance='l_inf')
+  return adversarial_loss_fn
 
 def general_trades_loss_fn(beta=6.0, epsilon=0.3, step_size=0.007, num_steps=10):
   def trades_loss_fn(model, data, target, optimizer):
@@ -79,6 +86,8 @@ def main():
     if args.loss_type == 'trades':
         beta = 1 / args.alpha
         loss_fn = general_trades_loss_fn(beta=beta, epsilon=args.severity)
+    if args.loss_type == 'adversarial':
+        loss_fn = general_adversarial_loss_fn(epsilon=args.severity)
     elif args.loss_type == 'ce':
         loss_fn = ce_loss
     elif args.loss_type == 'adaptive':
