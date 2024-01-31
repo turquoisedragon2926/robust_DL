@@ -230,6 +230,9 @@ class Plotter:
 
         for index, (key, data) in enumerate(accuracies_to_plot.items()):
             color = colors[index % len(colors)]  # Cycle through colors
+            # Plotting the line
+            plt.plot(data['x'], data['y'], color=color, label=key)
+            # Plotting the points and labeling them
             for x_val, y_val, label in zip(data['x'], data['y'], data['keys']):
                 plt.scatter(x_val, y_val, color=color)
                 plt.annotate(f'({key}, {label})', (x_val, y_val), textcoords="offset points", xytext=(0,10), ha='center')
@@ -237,6 +240,7 @@ class Plotter:
         plt.title(f'Natural Accuracy vs {y_axis}')
         plt.xlabel('Natural Accuracy')
         plt.ylabel(y_axis)
+        plt.legend()
         plt.grid(True)
         plt.savefig(os.path.join(self.plot_dir, plot_name))
         plt.close()
