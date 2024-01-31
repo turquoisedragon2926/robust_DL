@@ -32,7 +32,6 @@ def main():
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    train_noise = "uniform"
     eval_noises = ["none", "adversarial", "saturate.npy", "spatter.npy", "gaussian_blur.npy", "speckle_noise.npy", "jpeg_compression.npy", "pixelate.npy", "elastic_transform.npy", "contrast.npy", "brightness.npy", "fog.npy", "frost.npy", "snow.npy", "zoom_blur.npy", "motion_blur.npy", "defocus_blur.npy", "impulse_noise.npy", "shot_noise.npy", "gaussian_noise.npy"]
     severities = [0.05, 0.1, 0.25, 0.5, 0.75, 1.0]
     lrs = [0.005, 0.01, 0.03, 0.05]
@@ -61,7 +60,7 @@ def main():
         for severity in severities:
             logger.log(f"ON SEVERITY = {severity}")
 
-            args.train_noise = train_noise
+            args.lr = lr
             args.severity = severity
 
             config_id = get_config_id(args)
