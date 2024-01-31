@@ -10,30 +10,25 @@ def squared_l2_norm(x):
 def l2_norm(x):
     return squared_l2_norm(x).sqrt()
 
-def adversarial_loss(model, x_natural, y, step_size=0.003, epsilon=0.031, perturb_steps=10, distance='l_inf', optimizer=None):
-    model.eval()
+def adversarial_loss(model, x_natural, y, alpha, k, epsilon=0.031, optimizer=None):
 
-    # Clone the input data and require gradient computation
-    x_adv = x_natural.clone().detach().requires_grad_(True)
+    def perturb(x_natural, y):
+        x = x_natural.detach()
+        x = x + torch.zeros_like(x).uniform_(-epsilon, epsilon)
+        for i in range(k):
+            x.requires_grad_()
+            with torch.enable_grad():
+                logits = model(x)
+                loss = F.cross_entropy(logits, y)
+            grad = torch.autograd.grad(loss, [x])[0]
+            x = x.detach() + alpha * torch.sign(grad.detach())
+            x = torch.min(torch.max(x, x_natural - epsilon), x_natural + epsilon)
+            x = torch.clamp(x, 0, 1)
+        return x
 
-    for _ in range(perturb_steps):
-        output = model(x_adv)
-        loss = F.cross_entropy(output, y)
-        loss.backward()
-
-        # # For 'l_inf' distance, the gradient is used to create adversarial examples
-        # if distance == 'l_inf':
-        #     x_adv_grad = torch.sign(x_adv.grad.data)
-        #     x_adv.data = x_adv.data + step_size * x_adv_grad
-
-        #     # Clip x_adv to be within epsilon of x_natural, ensuring it stays within the valid data range
-        #     x_adv = torch.min(torch.max(x_adv, x_natural - epsilon), x_natural + epsilon).clamp(0, 1.0)
-
-        x_adv.grad.data.zero_()
-
-    model.train()
-    x_adv = Variable(x_adv.data, requires_grad=False)
-    adv_output = model(x_adv)
-    loss_adv = F.cross_entropy(adv_output, y)
-
-    return loss_adv
+    criterion = nn.CrossEntropyLoss()
+    adv = perturb(x_natural, y)
+    adv_outputs = model(adv)
+    loss = criterion(adv_outputs, y)
+    
+    return loss

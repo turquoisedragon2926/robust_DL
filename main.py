@@ -26,10 +26,10 @@ from utils.train import train
 from utils.evaluate import accuracy, robust_accuracy
 from utils.utils import save_to_key, parse_args, get_config_id
 
-def general_adversarial_loss_fn(epsilon=0.3, step_size=0.007, num_steps=10):
+def general_adversarial_loss_fn(alpha=0.00784, epsilon=0.0314, k=7):
   def adversarial_loss_fn(model, data, target, optimizer):
-    return adversarial_loss(model=model, x_natural=data, y=target, optimizer=optimizer, step_size=step_size,
-                      epsilon=epsilon, perturb_steps=num_steps, distance='l_inf')
+    return adversarial_loss(model=model, x_natural=data, y=target, alpha=alpha, k=k, optimizer=optimizer,
+                      epsilon=epsilon)
   return adversarial_loss_fn
 
 def general_trades_loss_fn(beta=6.0, epsilon=0.3, step_size=0.007, num_steps=10):
