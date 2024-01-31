@@ -54,8 +54,8 @@ def main():
     w_noise_accuracies = {}
     alpha_accuracies = {}
 
-    trades_adversarial_accuracies = {}
-    adaptive_adversarial_accuracies = {}
+    trades_adversarial_accuracies = []
+    adaptive_adversarial_accuracies = []
 
     natural_accuracies = []
     robustness_accuracies = []
@@ -111,7 +111,7 @@ def main():
         # Disclude natural and adversarial accuracy from this
         robustness_accuracies.append(sum(w_noise_robustness_accuracies[2:]) / len(w_noise_robustness_accuracies[1:]))
         w_noise_accuracies[w_noise] = w_noise_robustness_accuracies
-        adaptive_adversarial_accuracies[w_noise] = w_noise_robustness_accuracies[1]
+        adaptive_adversarial_accuracies.append(w_noise_robustness_accuracies[1])
 
     total_robustness_accuracies["adaptive"] = robustness_accuracies
     total_natural_accuracies["adaptive"] = natural_accuracies
@@ -168,7 +168,7 @@ def main():
         # Disclude natural and adversarial accuracy from this
         robustness_accuracies.append(sum(alpha_robustness_accuracies[2:]) / len(alpha_robustness_accuracies[1:]))
         alpha_accuracies[alpha] = alpha_robustness_accuracies
-        trades_adversarial_accuracies[alpha] = alpha_robustness_accuracies[1]
+        trades_adversarial_accuracies.append(alpha_robustness_accuracies[1])
 
     total_robustness_accuracies["trades"] = robustness_accuracies
     total_natural_accuracies["trades"] = natural_accuracies
