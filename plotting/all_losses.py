@@ -116,7 +116,8 @@ def main():
     total_robustness_accuracies["adaptive"] = robustness_accuracies
     total_natural_accuracies["adaptive"] = natural_accuracies
 
-    args.train_noise = "gaussian"
+    args.w_noise = 0.1 # resetting
+    args.train_noise = "gaussian" # resetting
     args.loss_type = "trades"
     args.lr = 0.01 # From emperical testing
 
