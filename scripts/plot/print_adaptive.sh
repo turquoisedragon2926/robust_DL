@@ -11,4 +11,5 @@ python3 plotting/print_adaptive.py \
     --valid_size 0.2 \
     --eval_interval 1 \
     --w_noise 0.1 \
+    --lr 0.03 \
     --tau1 10
