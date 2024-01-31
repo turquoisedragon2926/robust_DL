@@ -122,11 +122,11 @@ def main():
 
         configuration.id = get_config_id(args, disclude=['eval_noise'])
 
-        plotter.plot_w_noise_vs_robustness(w_noises, natural_accuracies, robustness_accuracies, train_noise, plot_name=f"{configuration.id}_w_noise_vs_robustness.png", metric="w_noise")
+        plotter.plot_severity_vs_robustness(w_noises, natural_accuracies, robustness_accuracies, train_noise, plot_name=f"{configuration.id}_w_noise_vs_robustness.png", metric="w_noise")
         plotter.plot_eval_noise_bar_chart(eval_noises, w_noise_accuracies, train_noise, plot_name=f"{configuration.id}_noise_vs_robustness.png", metric="w_noise")
     
-    plotter.plot_combined_w_noise_vs_robustness(w_noises, total_robustness_accuracies, train_noises, plot_name=f"{configuration.id}_combined_w_noise_vs_robustness.png", metric="w_noise")
-    plotter.plot_combined_w_noise_vs_robustness(w_noises, total_natural_accuracies, train_noises, plot_name=f"{configuration.id}_combined_w_noise_vs_natural.png", robust=False, metric="w_noise")
+    plotter.plot_combined_severity_vs_robustness(w_noises, total_robustness_accuracies, train_noises, plot_name=f"{configuration.id}_combined_w_noise_vs_robustness.png", metric="w_noise")
+    plotter.plot_combined_severity_vs_robustness(w_noises, total_natural_accuracies, train_noises, plot_name=f"{configuration.id}_combined_w_noise_vs_natural.png", robust=False, metric="w_noise")
 
     plotter.plot_tradeoff(w_noises, total_natural_accuracies, total_robustness_accuracies, plot_name=f"{configuration.id}_tradeoff_w_noise.png")
 
