@@ -176,19 +176,19 @@ class Plotter:
         :param w_noises: List of w_noise values.
         :param plot_name: Filename for the saved plot.
         """
-        fig, ax1 = plt.subplots(figsize=(12, 6))
+        fig, ax1 = plt.subplots(figsize=(12, 6)) # Use if needed
 
         betas = [1 / alpha if alpha != 0 else float('inf') for alpha in alphas]
 
         # Plot lines for alpha values
         for key in alpha_accuracies:
-            ax1.plot(betas, alpha_accuracies[key], label=f'{key} (alpha)')
+            ax1.plot(alphas, alpha_accuracies[key], label=f'{key} (alpha)')
 
         # Set up the x-axis for alpha values
         ax1.set_xlabel('Alpha')
         ax1.set_ylabel('Accuracy')
         ax1.tick_params(axis='x', labelcolor='blue')
-        ax1.set_xticks(betas)  # Ensure the ticks match the alpha values
+        ax1.set_xticks(alphas)  # Ensure the ticks match the alpha values
         ax1.legend(loc='upper left')
 
         # Set up a second x-axis for w_noise values
