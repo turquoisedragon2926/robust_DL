@@ -52,7 +52,7 @@ def main():
     total_natural_accuracies = {}
 
     for lr in lrs:
-        logger.log(f"EVAL STARTED FOR {train_noise} NOISE")
+        logger.log(f"EVAL STARTED FOR LR = {lr}")
         alpha_accuracies = {}
 
         natural_accuracies = []
