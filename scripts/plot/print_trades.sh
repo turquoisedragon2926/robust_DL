@@ -11,5 +11,5 @@ python3 plotting/print_eval.py \
     --eval_interval 1 \
     --w_noise 0.1 \
     --lr 0.01 \
-    --alpha 1 \
+    --alpha 0.5 \
     --tau1 10
