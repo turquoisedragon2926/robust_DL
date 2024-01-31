@@ -167,6 +167,47 @@ class Plotter:
         plt.savefig(os.path.join(self.plot_dir, plot_name))
         plt.close()
 
+    def plot_accuracy_vs_parameters(self, alpha_accuracies, w_noise_accuracies, alphas, w_noises, plot_name='accuracy_vs_parameters.png'):
+        """
+        Plots accuracies for varying alpha and w_noise values.
+        :param alpha_accuracies: Dictionary containing accuracies for each alpha value.
+        :param w_noise_accuracies: Dictionary containing accuracies for each w_noise value.
+        :param alphas: List of alpha values.
+        :param w_noises: List of w_noise values.
+        :param plot_name: Filename for the saved plot.
+        """
+        fig, ax1 = plt.subplots(figsize=(12, 6))
+
+        # Plot lines for alpha values
+        for key in alpha_accuracies:
+            ax1.plot(alphas, alpha_accuracies[key], label=f'{key} (alpha)')
+
+        # Set up the x-axis for alpha values
+        ax1.set_xlabel('Alpha')
+        ax1.set_ylabel('Accuracy')
+        ax1.tick_params(axis='x', labelcolor='blue')
+        ax1.legend(loc='upper left')
+
+        # Set up a second x-axis for w_noise values
+        ax2 = ax1.twiny()
+        ax2.set_xlabel('w_noise')
+        ax2.tick_params(axis='x', labelcolor='red')
+
+        # Ensure that the w_noise values align with alpha values on the plot
+        ax2.set_xlim(ax1.get_xlim())
+        ax2.set_xticks(ax1.get_xticks())
+        ax2.set_xticklabels(w_noises)
+
+        # Plot lines for w_noise values
+        for key in w_noise_accuracies:
+            ax2.plot(alphas, w_noise_accuracies[key], label=f'{key} (w_noise)', linestyle='--')
+
+        ax2.legend(loc='upper right')
+
+        plt.title('Accuracy for varying Alpha and w_noise')
+        plt.savefig(os.path.join(self.plot_dir, plot_name))
+        plt.close()
+
 # Example usage
 if __name__ == "__main__":
     plotter = Plotter()
