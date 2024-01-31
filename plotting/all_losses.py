@@ -61,6 +61,7 @@ def main():
     robustness_accuracies = []
 
     args.loss_type = "adaptive"
+    args.lr = 0.03 # From emperical testing
 
     for w_noise in w_noises:
         logger.log(f"ON W_NOISE = {w_noise}")
@@ -115,6 +116,7 @@ def main():
     total_natural_accuracies["adaptive"] = natural_accuracies
 
     args.loss_type = "trades"
+    args.lr = 0.01 # From emperical testing
 
     for alpha in alphas:
         logger.log(f"ON alpha = {alpha}")
