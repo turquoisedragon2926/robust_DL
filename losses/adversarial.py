@@ -21,13 +21,13 @@ def adversarial_loss(model, x_natural, y, step_size=0.003, epsilon=0.031, pertur
         loss = F.cross_entropy(output, y)
         loss.backward()
 
-        # For 'l_inf' distance, the gradient is used to create adversarial examples
-        if distance == 'l_inf':
-            x_adv_grad = torch.sign(x_adv.grad.data)
-            x_adv.data = x_adv.data + step_size * x_adv_grad
+        # # For 'l_inf' distance, the gradient is used to create adversarial examples
+        # if distance == 'l_inf':
+        #     x_adv_grad = torch.sign(x_adv.grad.data)
+        #     x_adv.data = x_adv.data + step_size * x_adv_grad
 
-            # Clip x_adv to be within epsilon of x_natural, ensuring it stays within the valid data range
-            x_adv = torch.min(torch.max(x_adv, x_natural - epsilon), x_natural + epsilon).clamp(0, 1.0)
+        #     # Clip x_adv to be within epsilon of x_natural, ensuring it stays within the valid data range
+        #     x_adv = torch.min(torch.max(x_adv, x_natural - epsilon), x_natural + epsilon).clamp(0, 1.0)
 
         x_adv.grad.data.zero_()
 
