@@ -4,7 +4,7 @@ python3 plotting/print_adaptive.py \
     --model_type resnet18 \
     --train_dataset cifar10 \
     --eval_dataset cifar10C \
-    --loss_type trades \
+    --loss_type adaptive \
     --train_noise uniform \
     --eval_noise gaussian_noise.npy \
     --epochs 100 \
