@@ -60,6 +60,7 @@ def main():
     natural_accuracies = []
     robustness_accuracies = []
 
+    args.train_noise = "uniform"
     args.loss_type = "adaptive"
     args.lr = 0.03 # From emperical testing
 
@@ -115,6 +116,7 @@ def main():
     total_robustness_accuracies["adaptive"] = robustness_accuracies
     total_natural_accuracies["adaptive"] = natural_accuracies
 
+    args.train_noise = "gaussian"
     args.loss_type = "trades"
     args.lr = 0.01 # From emperical testing
 
