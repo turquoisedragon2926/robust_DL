@@ -188,21 +188,25 @@ class Plotter:
         ax1.set_xlabel('Alpha')
         ax1.set_ylabel('Accuracy')
         ax1.tick_params(axis='x', labelcolor='blue')
-        ax1.set_xticks(alphas)  # Ensure the ticks match the alpha values
+        ax1.set_xticks(alphas)  # Set the alpha ticks
+        ax1.set_xticklabels([f"{alpha:.2f}" for alpha in alphas])  # Format the labels to two decimal places
         ax1.legend(loc='upper left')
 
         # Set up a second x-axis for w_noise values
         ax2 = ax1.twiny()
         ax2.set_xlabel('w_noise')
         ax2.tick_params(axis='x', labelcolor='red')
-        
-        # Set the number of x-ticks to match the length of w_noises
-        ax2.set_xticks(np.linspace(0, 1, len(w_noises)))
-        ax2.set_xticklabels(w_noises)
+
+        # Calculate positions for w_noise ticks to align with the plotted w_noise data
+        w_noise_positions = np.linspace(ax1.get_xticks()[0], ax1.get_xticks()[-1], len(w_noises))
+
+        ax2.set_xticks(w_noise_positions)
+        ax2.set_xticklabels([f"{wn:.2f}" for wn in w_noises])  # Format the labels to two decimal places
 
         # Plot lines for w_noise values
         for key in w_noise_accuracies:
-            ax2.plot(np.linspace(0, 1, len(w_noises)), w_noise_accuracies[key], label=f'{key} (w_noise)', linestyle='--')
+            # Plot w_noise accuracies at the calculated positions
+            ax2.plot(w_noise_positions, w_noise_accuracies[key], label=f'{key} (w_noise)', linestyle='--')
 
         ax2.legend(loc='upper right')
 
@@ -213,5 +217,3 @@ class Plotter:
 # Example usage
 if __name__ == "__main__":
     plotter = Plotter()
-    # Dummy data for demonstration
-    plotter.plot_loss_accuracy([0.9, 0.7, 0.5, 0.4], [0.6, 0.7, 0.8, 0.9])
