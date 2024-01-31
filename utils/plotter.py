@@ -179,16 +179,18 @@ class Plotter:
         fig, ax1 = plt.subplots(figsize=(12, 6)) # Use if needed
 
         betas = [1 / alpha if alpha != 0 else float('inf') for alpha in alphas]
+        alpha_positions = np.linspace(0, 1, len(alphas))
 
         # Plot lines for alpha values
         for key in alpha_accuracies:
-            ax1.plot(alphas, alpha_accuracies[key], label=f'{key} (alpha)')
+            # Plot alpha accuracies at the calculated positions
+            ax1.plot(alpha_positions, alpha_accuracies[key], label=f'{key} (alpha)')
 
         # Set up the x-axis for alpha values
         ax1.set_xlabel('Alpha')
         ax1.set_ylabel('Accuracy')
         ax1.tick_params(axis='x', labelcolor='blue')
-        ax1.set_xticks(alphas)  # Set the alpha ticks
+        ax1.set_xticks(alpha_positions)  # Set evenly spaced alpha positions
         ax1.set_xticklabels([f"{alpha:.2f}" for alpha in alphas])  # Format the labels to two decimal places
         ax1.legend(loc='upper left')
 
