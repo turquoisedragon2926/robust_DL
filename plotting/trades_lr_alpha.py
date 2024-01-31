@@ -62,7 +62,7 @@ def main():
             logger.log(f"ON ALPHA = {alpha}")
 
             args.train_noise = train_noise
-            args.lr = lrs
+            args.lr = lr
             args.alpha = alpha
 
             config_id = get_config_id(args)
