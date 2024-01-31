@@ -1,4 +1,4 @@
-python3 plotting/print_adaptive.py \
+python3 plotting/print_eval.py \
     --mode_type train \
     --attack_type identity \
     --model_type resnet18 \
