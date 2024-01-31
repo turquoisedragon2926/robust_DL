@@ -186,21 +186,21 @@ class Plotter:
         ax1.set_xlabel('Alpha')
         ax1.set_ylabel('Accuracy')
         ax1.tick_params(axis='x', labelcolor='blue')
+        ax1.set_xticks(alphas)  # Ensure the ticks match the alpha values
         ax1.legend(loc='upper left')
 
         # Set up a second x-axis for w_noise values
         ax2 = ax1.twiny()
         ax2.set_xlabel('w_noise')
         ax2.tick_params(axis='x', labelcolor='red')
-
-        # Ensure that the w_noise values align with alpha values on the plot
-        ax2.set_xlim(ax1.get_xlim())
-        ax2.set_xticks(ax1.get_xticks())
+        
+        # Set the number of x-ticks to match the length of w_noises
+        ax2.set_xticks(np.linspace(0, 1, len(w_noises)))
         ax2.set_xticklabels(w_noises)
 
         # Plot lines for w_noise values
         for key in w_noise_accuracies:
-            ax2.plot(alphas, w_noise_accuracies[key], label=f'{key} (w_noise)', linestyle='--')
+            ax2.plot(np.linspace(0, 1, len(w_noises)), w_noise_accuracies[key], label=f'{key} (w_noise)', linestyle='--')
 
         ax2.legend(loc='upper right')
 
