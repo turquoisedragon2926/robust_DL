@@ -10,7 +10,7 @@ def squared_l2_norm(x):
 def l2_norm(x):
     return squared_l2_norm(x).sqrt()
 
-def adversarial_loss(model, x_natural, y, step_size=0.003, epsilon=0.031, perturb_steps=10, distance='l_inf'):
+def adversarial_loss(model, x_natural, y, step_size=0.003, epsilon=0.031, perturb_steps=10, distance='l_inf', optimizer=None):
     model.eval()
 
     # Clone the input data and require gradient computation
