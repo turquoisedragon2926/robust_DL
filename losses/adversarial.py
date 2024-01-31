@@ -10,8 +10,7 @@ def squared_l2_norm(x):
 def l2_norm(x):
     return squared_l2_norm(x).sqrt()
 
-def adversarial_loss(model, x_natural, y, alpha, k, epsilon=0.031, optimizer=None):
-
+def adversarial_loss(model, x_natural, y, alpha, k, epsilon=0.031, optimizer=None, clip_value=5.0):
     def perturb(x_natural, y):
         x = x_natural.detach()
         x = x + torch.zeros_like(x).uniform_(-epsilon, epsilon)
@@ -21,6 +20,10 @@ def adversarial_loss(model, x_natural, y, alpha, k, epsilon=0.031, optimizer=Non
                 logits = model(x)
                 loss = F.cross_entropy(logits, y)
             grad = torch.autograd.grad(loss, [x])[0]
+
+            # Try gradient clipping
+            grad = torch.clamp(grad, -clip_value, clip_value)
+
             x = x.detach() + alpha * torch.sign(grad.detach())
             x = torch.min(torch.max(x, x_natural - epsilon), x_natural + epsilon)
             x = torch.clamp(x, 0, 1)
