@@ -178,7 +178,9 @@ class Plotter:
         """
         fig, ax1 = plt.subplots(figsize=(12, 6))
 
+        print(alphas)
         betas = [1 / alpha if alpha != 0 else float('inf') for alpha in alphas]
+        print(betas)
 
         # Plot lines for alpha values
         for key in alpha_accuracies:
