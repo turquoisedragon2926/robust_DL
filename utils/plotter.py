@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import os
 import numpy as np
+import seaborn as sns
 
 class Plotter:
     def __init__(self, plot_dir='plots'):
@@ -225,24 +226,29 @@ class Plotter:
         :param y_axis: Label for the y-axis.
         """
 
-        plt.figure(figsize=(10, 7))
-        colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']  # Basic color codes for differentiation
+        plt.figure(figsize=(12, 8))  # Larger figure size for better visibility
+        sns.set(style="whitegrid")  # Using seaborn for better aesthetics
+
+        # Using a more sophisticated color palette
+        palette = sns.color_palette("husl", len(accuracies_to_plot))
 
         for index, (key, data) in enumerate(accuracies_to_plot.items()):
-            color = colors[index % len(colors)]  # Cycle through colors
+            color = palette[index]
             # Plotting the line
-            plt.plot(data['x'], data['y'], color=color, label=key)
+            plt.plot(data['x'], data['y'], color=color, label=key, marker='o')
             # Plotting the points and labeling them
             for x_val, y_val, label in zip(data['x'], data['y'], data['keys']):
-                plt.scatter(x_val, y_val, color=color)
-                plt.annotate(f'({key}, {label})', (x_val, y_val), textcoords="offset points", xytext=(0,10), ha='center')
+                plt.annotate(f'({key}, {label})', (x_val, y_val), textcoords="offset points", xytext=(0,10), ha='center', fontsize=9)
 
-        plt.title(f'Natural Accuracy vs {y_axis}')
-        plt.xlabel('Natural Accuracy')
-        plt.ylabel(y_axis)
-        plt.legend()
-        plt.grid(True)
-        plt.savefig(os.path.join(self.plot_dir, plot_name))
+        plt.title(f'Natural Accuracy vs {y_axis}', fontsize=16)
+        plt.xlabel('Natural Accuracy', fontsize=14)
+        plt.ylabel(y_axis, fontsize=14)
+        plt.xticks(fontsize=12)
+        plt.yticks(fontsize=12)
+        plt.legend(fontsize=12)
+        plt.tight_layout()  # Adjust the padding between and around subplots
+
+        plt.savefig(os.path.join(self.plot_dir, plot_name), bbox_inches='tight')  # Save with tight bounding box
         plt.close()
 
 # Example usage

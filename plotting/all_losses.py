@@ -34,8 +34,8 @@ def main():
 
     eval_noises = ["none", "adversarial", "saturate.npy", "spatter.npy", "gaussian_blur.npy", "speckle_noise.npy", "jpeg_compression.npy", "pixelate.npy", "elastic_transform.npy", "contrast.npy", "brightness.npy", "fog.npy", "frost.npy", "snow.npy", "zoom_blur.npy", "motion_blur.npy", "defocus_blur.npy", "impulse_noise.npy", "shot_noise.npy", "gaussian_noise.npy"]
 
-    w_noises = [0.01, 0.05, 0.12, 0.15, 0.1, 0.2] #, 0.75, 1.0]
-    alphas = [0.1, 0.25, 0.5, 1.0, 2.0, 3.0] 
+    w_noises = [0.01, 0.05] #, 0.12, 0.15, 0.1, 0.2] #, 0.75, 1.0]
+    alphas = [0.1, 0.25] #, 0.5, 1.0, 2.0, 3.0] 
     # alphas = [3.0, 2.0, 1.0, 0.5, 0.25, 0.1] # If We want betas to be increasing
 
     if args.model_type == 'alexnet':
@@ -102,7 +102,7 @@ def main():
             # Load up the new evaluation data
             data.attack_loader = attack_loader
             configuration.data = data
-            robustness_accuracy = None # load_from_key(robustness_accuracy_path, configuration.id) # Force recompute
+            robustness_accuracy = load_from_key(robustness_accuracy_path, configuration.id) # Force recompute
             if robustness_accuracy is None:
                 robustness_accuracy = robust_accuracy(configuration, device)
                 save_to_key(robustness_accuracy_path, configuration.id, robustness_accuracy)
@@ -164,7 +164,7 @@ def main():
             # Load up the new evaluation data
             data.attack_loader = attack_loader
             configuration.data = data
-            robustness_accuracy = None # load_from_key(robustness_accuracy_path, configuration.id) # Force recompute
+            robustness_accuracy = load_from_key(robustness_accuracy_path, configuration.id) # Force recompute
             if robustness_accuracy is None:
                 robustness_accuracy = robust_accuracy(configuration, device)
                 save_to_key(robustness_accuracy_path, configuration.id, robustness_accuracy)
