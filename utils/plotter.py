@@ -232,17 +232,31 @@ class Plotter:
         # Using a more sophisticated color palette
         palette = sns.color_palette("husl", len(accuracies_to_plot))
 
+        all_x_values = []
+        all_y_values = []
+
         for index, (key, data) in enumerate(accuracies_to_plot.items()):
             color = palette[index]
             # Plotting the points
             plt.scatter(data['x'], data['y'], color=color, label=key)
-            # Labeling the points
+            # Collecting all x and y values for adjusting limits
+            all_x_values.extend(data['x'])
+            all_y_values.extend(data['y'])
+            # Labeling the points with larger font size
             for x_val, y_val, label in zip(data['x'], data['y'], data['keys']):
-                plt.annotate(f'({key}, {label})', (x_val, y_val), textcoords="offset points", xytext=(0,10), ha='center', fontsize=11)
+                plt.annotate(f'({key}, {label})', (x_val, y_val), textcoords="offset points", xytext=(0,10), ha='center', fontsize=12)
 
+        # Setting the limits with buffer
+        x_buffer = (max(all_x_values) - min(all_x_values)) * 0.05  # 5% buffer
+        y_buffer = (max(all_y_values) - min(all_y_values)) * 0.05  # 5% buffer
+        plt.xlim(min(all_x_values) - x_buffer, max(all_x_values) + x_buffer)
+        plt.ylim(min(all_y_values) - y_buffer, max(all_y_values) + y_buffer)
+
+        # Increased spacing for the title and axis labels
         plt.title(f'Natural Accuracy vs {y_axis}', fontsize=16, pad=20)
         plt.xlabel('Natural Accuracy', fontsize=14, labelpad=15)
         plt.ylabel(y_axis, fontsize=14, labelpad=15)
+
         plt.xticks(fontsize=12)
         plt.yticks(fontsize=12)
         plt.legend(fontsize=12)
