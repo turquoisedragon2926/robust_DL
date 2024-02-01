@@ -105,7 +105,7 @@ def main():
                 data.attack_loader = attack_loader
                 configuration.data = data
 
-                robustness_accuracy = None # load_from_key(robustness_accuracy_path, configuration.id)
+                robustness_accuracy = load_from_key(robustness_accuracy_path, configuration.id) if lr == 0.005 else None
                 if robustness_accuracy is None:
                     robustness_accuracy = robust_accuracy(configuration, device)
                     save_to_key(robustness_accuracy_path, configuration.id, robustness_accuracy)
@@ -122,13 +122,13 @@ def main():
 
         configuration.id = get_config_id(args, disclude=['eval_noise'])
 
-        plotter.plot_severity_vs_robustness(severities, natural_accuracies, robustness_accuracies, lr, plot_name=f"{configuration.id}_severity_vs_robustness_lr_adaptive.png")
-        plotter.plot_eval_noise_bar_chart(eval_noises, severity_accuracies, lr, plot_name=f"{configuration.id}_noise_vs_robustness_lr_adaptive.png")
+        plotter.plot_severity_vs_robustness(severities, natural_accuracies, robustness_accuracies, lr, plot_name=f"{configuration.id}_severity_adaptive.png")
+        plotter.plot_eval_noise_bar_chart(eval_noises, severity_accuracies, lr, plot_name=f"{configuration.id}_noise_adaptive.png")
     
-    plotter.plot_combined_severity_vs_robustness(severities, total_robustness_accuracies, lrs, plot_name=f"{configuration.id}_combined_severity_vs_robustness_lr_adaptive.png")
-    plotter.plot_combined_severity_vs_robustness(severities, total_natural_accuracies, lrs, plot_name=f"{configuration.id}_combined_severity_vs_natural_lr_adaptive.png", robust=False)
+    plotter.plot_combined_severity_vs_robustness(severities, total_robustness_accuracies, lrs, plot_name=f"{configuration.id}_combined_adaptive.png")
+    plotter.plot_combined_severity_vs_robustness(severities, total_natural_accuracies, lrs, plot_name=f"{configuration.id}_combined_adaptive.png", robust=False)
 
-    plotter.plot_tradeoff(severities, total_natural_accuracies, total_robustness_accuracies, plot_name=f"{configuration.id}_tradeoff_lr_adaptive.png")
+    plotter.plot_tradeoff(severities, total_natural_accuracies, total_robustness_accuracies, plot_name=f"{configuration.id}_tradeoff_adaptive.png")
 
 if __name__ == "__main__":
     main()
