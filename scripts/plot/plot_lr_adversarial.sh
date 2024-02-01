@@ -4,7 +4,7 @@ python3 plotting/adversarial_lr.py \
     --train_dataset cifar10 \
     --eval_dataset cifar10C \
     --model_type resnet18 \
-    --loss_type adaptive \
+    --loss_type adversarial \
     --eval_noise gaussian_noise.npy \
     --epochs 100 \
     --valid_size 0.2 \
