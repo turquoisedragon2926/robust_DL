@@ -1,5 +1,5 @@
 severities=(0.05 0.1 0.25 0.5 0.75 1)
-train_noises=("blur" "uniform") # ("gaussian" "uniform" "shot" "dynamicBlur" "random")
+train_noises=("uniform") # ("blur" "gaussian" "uniform" "shot" "dynamicBlur" "random")
 
 for train_noise in "${train_noises[@]}"; do
     for severity in "${severities[@]}"; do
