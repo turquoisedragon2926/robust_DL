@@ -44,6 +44,12 @@ def general_adaptive_loss_fn(noise_model, train_noise, severity, w_noise, tau1, 
 
   return adaptive_loss_fn
 
+def general_ce_loss_fn(train_noise, severity):
+  def ce_loss_fn(model, data, target, optimizer):
+    return ce_loss(model, data, target, train_noise, severity=severity)
+
+  return ce_loss_fn
+
 def main():
     args = parse_args()
     config_id = get_config_id(args)
@@ -89,7 +95,7 @@ def main():
     if args.loss_type == 'adversarial':
         loss_fn = general_adversarial_loss_fn(epsilon=args.severity)
     elif args.loss_type == 'ce':
-        loss_fn = ce_loss
+        loss_fn = general_ce_loss_fn(train_noise=args.train_noise, severity=args.severity)
     elif args.loss_type == 'adaptive':
         loss_fn = general_adaptive_loss_fn(noise_model, args.train_noise, args.severity, args.w_noise, args.tau1, args.tau2)
     else:

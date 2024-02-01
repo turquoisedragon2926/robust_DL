@@ -12,6 +12,10 @@ class NoiseFunction:
     def add_noise(self, data):
         raise NotImplementedError
 
+class EmptyNoise(NoiseFunction):
+    def add_noise(self, data):
+        return data, None
+    
 class GaussianNoise(NoiseFunction):
     def add_noise(self, data):
         noise = torch.randn(data.size()) * self.severity
@@ -154,7 +158,8 @@ class NoiseFunctionFactory:
             'uniform': UniformNoise,
             'shot': ShotNoise,
             'blur': BlurNoise,
-            'dynamicBlur': DynamicBlurNoise
+            'dynamicBlur': DynamicBlurNoise,
+            'none': EmptyNoise
         }
         if train_noise == 'random':
             return random.choice(list(noise_classes.values()))(severity)
