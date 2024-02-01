@@ -234,9 +234,9 @@ class Plotter:
 
         for index, (key, data) in enumerate(accuracies_to_plot.items()):
             color = palette[index]
-            # Plotting the line
-            plt.plot(data['x'], data['y'], color=color, label=key, marker='o')
-            # Plotting the points and labeling them
+            # Plotting the points
+            plt.scatter(data['x'], data['y'], color=color, label=key)
+            # Labeling the points
             for x_val, y_val, label in zip(data['x'], data['y'], data['keys']):
                 plt.annotate(f'({key}, {label})', (x_val, y_val), textcoords="offset points", xytext=(0,10), ha='center', fontsize=9)
 
