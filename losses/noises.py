@@ -14,7 +14,7 @@ class NoiseFunction:
 
 class EmptyNoise(NoiseFunction):
     def add_noise(self, data):
-        return data, None
+        return data, 0
     
 class GaussianNoise(NoiseFunction):
     def add_noise(self, data):
