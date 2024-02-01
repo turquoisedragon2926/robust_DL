@@ -241,8 +241,8 @@ class Plotter:
                 plt.annotate(f'({key}, {label})', (x_val, y_val), textcoords="offset points", xytext=(0,10), ha='center', fontsize=11)
 
         plt.title(f'Natural Accuracy vs {y_axis}', fontsize=16, pad=20)
-        plt.xlabel('Natural Accuracy', fontsize=14, pad=15)
-        plt.ylabel(y_axis, fontsize=14, pad=15)
+        plt.xlabel('Natural Accuracy', fontsize=14, labelpad=15)
+        plt.ylabel(y_axis, fontsize=14, labelpad=15)
         plt.xticks(fontsize=12)
         plt.yticks(fontsize=12)
         plt.legend(fontsize=12)
