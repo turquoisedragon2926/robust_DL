@@ -27,7 +27,7 @@ def main():
     logger = Logger.get_instance()
     plotter = Plotter('results/plots/eval')
 
-    data_loader = DataLoaderFactory(root='data', valid_size=args.valid_size, train_dataset=args.train_dataset, eval_dataset=args.eval_dataset)
+    data_loader = DataLoaderFactory(root='../../robust_DL/data', valid_size=args.valid_size, train_dataset=args.train_dataset, eval_dataset=args.eval_dataset)
     train_loader, valid_loader, test_loader = data_loader.get_data_loaders()
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
