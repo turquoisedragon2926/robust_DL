@@ -227,7 +227,7 @@ class Plotter:
         """
 
         plt.figure(figsize=(12, 8))  # Larger figure size for better visibility
-        # sns.set(style="whitegrid")  # Using seaborn for better aesthetics, dont need grid for now
+        sns.set(style="whitegrid")  # Using seaborn for better aesthetics, dont need grid for now
 
         # Using a more sophisticated color palette
         palette = sns.color_palette("husl", len(accuracies_to_plot))
@@ -260,7 +260,7 @@ class Plotter:
         plt.xticks(fontsize=12)
         plt.yticks(fontsize=12)
         plt.legend(fontsize=12)
-        plt.grid(False) # Dont need grid for now
+        # plt.grid(False) # Dont need grid for now
         plt.tight_layout()  # Adjust the padding between and around subplots
 
         plt.savefig(os.path.join(self.plot_dir, plot_name), bbox_inches='tight')  # Save with tight bounding box
