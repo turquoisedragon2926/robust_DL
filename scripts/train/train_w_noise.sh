@@ -1,4 +1,4 @@
-w_noises=(0.01 0.12 0.15 0.2)
+w_noises=(0.01 0.05 0.12 0.15 0.1 0.2)
 
 for w_noise in "${w_noises[@]}"; do
     bash scripts/experiment.sh \
@@ -16,5 +16,6 @@ for w_noise in "${w_noises[@]}"; do
         --severity 0.05 \
         --lr 0.03 \
         --w_noise "$w_noise" \
-        --tau1 10
+        --tau1 10 \
+        --num_samples 10
 done

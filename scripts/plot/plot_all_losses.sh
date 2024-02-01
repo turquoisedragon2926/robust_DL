@@ -8,3 +8,4 @@ python3 plotting/all_losses.py \
     --epochs 100 \
     --valid_size 0.2 \
     --eval_interval 1 \
+    --num_samples 10
