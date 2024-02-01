@@ -113,8 +113,8 @@ def main():
                 configuration.attack = attack
                 args.eval_noise = default_noise
 
-            # Disclude natural accuracy from this
-            robustness_accuracies.append(sum(severity_robustness_accuracies[1:]) / len(severity_robustness_accuracies[1:]))
+            # Disclude natural accuracy and adversarial from this
+            robustness_accuracies.append(sum(severity_robustness_accuracies[2:]) / len(severity_robustness_accuracies[1:]))
             severity_accuracies[severity] = severity_robustness_accuracies
 
         total_robustness_accuracies[lr] = robustness_accuracies
