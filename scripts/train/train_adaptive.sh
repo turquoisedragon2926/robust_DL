@@ -16,5 +16,6 @@ for severity in "${severities[@]}"; do
         --severity $severity \
         --w_noise 0.1 \
         --lr 0.03 \
-        --tau1 10
+        --tau1 10 \
+        --num_samples 10
 done

@@ -38,9 +38,9 @@ def general_trades_loss_fn(beta=6.0, epsilon=0.3, step_size=0.007, num_steps=10)
                       epsilon=epsilon, perturb_steps=num_steps, beta=beta, distance='l_inf')
   return trades_loss_fn
 
-def general_adaptive_loss_fn(noise_model, train_noise, severity, w_noise, tau1, tau2):
+def general_adaptive_loss_fn(noise_model, train_noise, severity, w_noise, tau1, tau2, num_samples):
   def adaptive_loss_fn(model, data, target, optimizer):
-    return adaptive_loss(model, data, target, train_noise, noise_model, severity=severity, w_noise=w_noise, tau1=tau1, tau2=tau2)
+    return adaptive_loss(model, data, target, train_noise, noise_model, severity=severity, w_noise=w_noise, tau1=tau1, tau2=tau2, num_samples=num_samples)
 
   return adaptive_loss_fn
 
@@ -97,7 +97,7 @@ def main():
     elif args.loss_type == 'ce':
         loss_fn = general_ce_loss_fn(train_noise=args.train_noise, severity=args.severity)
     elif args.loss_type == 'adaptive':
-        loss_fn = general_adaptive_loss_fn(noise_model, args.train_noise, args.severity, args.w_noise, args.tau1, args.tau2)
+        loss_fn = general_adaptive_loss_fn(noise_model, args.train_noise, args.severity, args.w_noise, args.tau1, args.tau2, args.num_samples)
     else:
         logger.log("Loss Type not supported")
         sys.exit(1)

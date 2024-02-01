@@ -17,6 +17,7 @@ def parse_args():
     parser.add_argument('--epochs', type=int, default=50, help='Number of epochs (default: 50)')
     parser.add_argument('--valid_size', type=float, default=0.2, help='Validation dataset ratio')
     parser.add_argument('--eval_interval', type=int, default=1, help='Evaluation interval for robustness plot')
+    parser.add_argument('--num_samples', type=int, default=1, help='No of samples to compute expectation over')
     parser.add_argument('--lr', type=float, default=0.005, help='Learning rate for training the model')
     parser.add_argument('--model_checkpoint', type=str, default=None, help='Path to model checkpoint (optional)')
     parser.add_argument('--optimizer_checkpoint', type=str, default=None, help='Path to optimizer checkpoint (optional)')

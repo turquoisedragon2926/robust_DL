@@ -52,6 +52,7 @@ python3 main.py \
     $(add_arg lr "$lr") \
     $(add_arg alpha "$alpha") \
     $(add_arg severity "$severity") \
+    $(add_arg num_samples "$num_samples") \
     $(add_arg w_noise "$w_noise") \
     $(add_arg tau1 "$tau1") \
     $(add_arg tau2 "$tau2")

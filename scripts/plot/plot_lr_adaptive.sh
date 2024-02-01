@@ -10,3 +10,4 @@ python3 plotting/adaptive_lr_alpha.py \
     --epochs 100 \
     --valid_size 0.2 \
     --eval_interval 1 \
+    --num_samples 10

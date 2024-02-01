@@ -16,6 +16,7 @@ for lr in "${lrs[@]}"; do
             --valid_size 0.2 \
             --eval_interval 1 \
             --severity $severity \
-            --lr $lr
+            --lr $lr \
+            --num_samples 10
     done
 done
