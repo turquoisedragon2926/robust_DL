@@ -105,7 +105,7 @@ def main():
                 data.attack_loader = attack_loader
                 configuration.data = data
 
-                robustness_accuracy = load_from_key(robustness_accuracy_path, configuration.id) if lr == 0.005 else None
+                robustness_accuracy = load_from_key(robustness_accuracy_path, configuration.id)
                 if robustness_accuracy is None:
                     robustness_accuracy = robust_accuracy(configuration, device)
                     save_to_key(robustness_accuracy_path, configuration.id, robustness_accuracy)
@@ -114,7 +114,7 @@ def main():
                 args.eval_noise = default_noise
 
             # Disclude natural accuracy from this
-            robustness_accuracies.append(sum(severity_robustness_accuracies[1:]) / len(severity_robustness_accuracies[1:]))
+            robustness_accuracies.append(sum(severity_robustness_accuracies[2:]) / len(severity_robustness_accuracies[1:]))
             severity_accuracies[severity] = severity_robustness_accuracies
 
         total_robustness_accuracies[lr] = robustness_accuracies
