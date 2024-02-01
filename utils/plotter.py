@@ -244,11 +244,11 @@ class Plotter:
             all_y_values.extend(data['y'])
             # Labeling the points with larger font size
             for x_val, y_val, label in zip(data['x'], data['y'], data['keys']):
-                plt.annotate(f'({key}, {label})', (x_val, y_val), textcoords="offset points", xytext=(0,10), ha='center', fontsize=12)
+                plt.annotate(f'({key}, {label})', (x_val, y_val), textcoords="offset points", xytext=(0,10), ha='center', fontsize=11)
 
         # Setting the limits with buffer
-        x_buffer = (max(all_x_values) - min(all_x_values)) * 0.05  # 5% buffer
-        y_buffer = (max(all_y_values) - min(all_y_values)) * 0.05  # 5% buffer
+        x_buffer = (max(all_x_values) - min(all_x_values)) * 0.1  # 10% buffer
+        y_buffer = (max(all_y_values) - min(all_y_values)) * 0.1  # 10% buffer
         plt.xlim(min(all_x_values) - x_buffer, max(all_x_values) + x_buffer)
         plt.ylim(min(all_y_values) - y_buffer, max(all_y_values) + y_buffer)
 
