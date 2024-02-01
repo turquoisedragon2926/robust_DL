@@ -32,7 +32,7 @@ def main():
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    train_noises = ["gaussian", "uniform", "shot", "blur", "random", "dynamicBlur"]
+    train_noises = ["blur", "uniform"] # ["gaussian", "uniform", "shot", "blur", "random", "dynamicBlur"]
     eval_noises = ["none", "adversarial", "saturate.npy", "spatter.npy", "gaussian_blur.npy", "speckle_noise.npy", "jpeg_compression.npy", "pixelate.npy", "elastic_transform.npy", "contrast.npy", "brightness.npy", "fog.npy", "frost.npy", "snow.npy", "zoom_blur.npy", "motion_blur.npy", "defocus_blur.npy", "impulse_noise.npy", "shot_noise.npy", "gaussian_noise.npy"]
     severities = [0.05, 0.1, 0.25, 0.5, 0.75, 1.0]
 
@@ -63,7 +63,7 @@ def main():
             args.train_noise = train_noise
             args.severity = severity
 
-            config_id = get_config_id(args)
+            config_id = get_config_id(args, disclude=[] if (train_noise == 'dynamicBlur' or not args.model_type == "alexnet") else ["train_dataset", "eval_dataset"])
             model_pt = os.path.join("results", "models", f"{config_id}.pt")
             model.load_state_dict(torch.load(model_pt))
 
@@ -122,13 +122,13 @@ def main():
 
         configuration.id = get_config_id(args, disclude=['eval_noise'])
 
-        plotter.plot_severity_vs_robustness(severities, natural_accuracies, robustness_accuracies, train_noise, plot_name=f"{configuration.id}_severity_vs_robustness.png")
-        plotter.plot_eval_noise_bar_chart(eval_noises, severity_accuracies, train_noise, plot_name=f"{configuration.id}_noise_vs_robustness.png")
+        plotter.plot_severity_vs_robustness(severities, natural_accuracies, robustness_accuracies, train_noise, plot_name=f"{configuration.id}_severity_vs_robustness_test.png")
+        plotter.plot_eval_noise_bar_chart(eval_noises, severity_accuracies, train_noise, plot_name=f"{configuration.id}_noise_vs_robustness_test.png")
     
-    plotter.plot_combined_severity_vs_robustness(severities, total_robustness_accuracies, train_noises, plot_name=f"{configuration.id}_combined_severity_vs_robustness.png")
-    plotter.plot_combined_severity_vs_robustness(severities, total_natural_accuracies, train_noises, plot_name=f"{configuration.id}_combined_severity_vs_natural.png", robust=False)
+    plotter.plot_combined_severity_vs_robustness(severities, total_robustness_accuracies, train_noises, plot_name=f"{configuration.id}_combined_severity_vs_robustness_test.png")
+    plotter.plot_combined_severity_vs_robustness(severities, total_natural_accuracies, train_noises, plot_name=f"{configuration.id}_combined_severity_vs_natural_test.png", robust=False)
 
-    plotter.plot_tradeoff(severities, total_natural_accuracies, total_robustness_accuracies, plot_name=f"{configuration.id}_tradeoff.png")
+    plotter.plot_tradeoff(severities, total_natural_accuracies, total_robustness_accuracies, plot_name=f"{configuration.id}_tradeoff_test.png")
 
 if __name__ == "__main__":
     main()

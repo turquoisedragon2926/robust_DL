@@ -31,20 +31,13 @@ sbatch <<EOT
 #SBATCH --job-name ${mode_type}_${model_type}_${train_dataset}_${eval_dataset}_${loss_type}_${eval_noise}_${epochs}
 #SBATCH --mail-user=richardr2926@gmail.com
 #SBATCH --mail-type=ALL
-#SBATCH --time=0:30:00
+#SBATCH --time=00:40:00
 #SBATCH --account=m3863_g
 #SBATCH --gpu-bind=none
 
-export SLURM_CPU_BIND="cores"
-export PATH=$PATH:$HOME/.julia/bin
-export LD_PRELOAD=/opt/cray/pe/lib64/libmpi_gtl_cuda.so.0
-
-module load conda
-conda activate robust_DL
-module load pytorch/2.0.1
-
 python3 main.py \
     $(add_arg mode_type "$mode_type") \
+    $(add_arg attack_type "$attack_type") \
     $(add_arg model_type "$model_type") \
     $(add_arg train_dataset "$train_dataset") \
     $(add_arg eval_dataset "$eval_dataset") \
@@ -56,8 +49,10 @@ python3 main.py \
     $(add_arg eval_interval "$eval_interval") \
     $(add_arg model_checkpoint "$model_checkpoint") \
     $(add_arg optimizer_checkpoint "$optimizer_checkpoint") \
+    $(add_arg lr "$lr") \
     $(add_arg alpha "$alpha") \
     $(add_arg severity "$severity") \
+    $(add_arg num_samples "$num_samples") \
     $(add_arg w_noise "$w_noise") \
     $(add_arg tau1 "$tau1") \
     $(add_arg tau2 "$tau2")

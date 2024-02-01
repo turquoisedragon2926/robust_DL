@@ -49,6 +49,10 @@ class DataLoaderFactory:
 
     def get_cifar10c_attack_loader(self, eval_noise):
 
+        if eval_noise == 'adversarial':
+            _, _, test_loader = self.get_data_loaders()
+            return test_loader
+
         transform_cifar10c = transforms.Compose([
             transforms.ToPILImage(),
             transforms.ToTensor(),

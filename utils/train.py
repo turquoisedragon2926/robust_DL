@@ -15,7 +15,7 @@ def train(configuration, args, device):
   best_eval_acc = 0.0
   total_time = 0.0
   total_loss = 0.0
-  patience = 5  # number of VAL Acc values observed after best value to stop training
+  patience = args.epochs # args.epochs # number of VAL Acc values observed after best value to stop training. TODO: Max temporarily
 
   # Initialize lists to store per-epoch loss and validation accuracy
   epoch_losses = []

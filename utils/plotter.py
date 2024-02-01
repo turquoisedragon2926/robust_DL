@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import os
 import numpy as np
+import seaborn as sns
 
 class Plotter:
     def __init__(self, plot_dir='plots'):
@@ -50,7 +51,7 @@ class Plotter:
         plt.savefig(os.path.join(self.plot_dir, plot_name))
         plt.close()
 
-    def plot_severity_vs_robustness(self, severities, natural_accuracies, robustness_accuracies, train_noise, plot_name='severity_vs_robustness.png'):
+    def plot_severity_vs_robustness(self, severities, natural_accuracies, robustness_accuracies, train_noise, metric="Severity", plot_name='severity_vs_robustness.png'):
         """
         Plots severity vs natural and average robustness accuracy.
         :param severities: List of severities.
@@ -64,15 +65,15 @@ class Plotter:
         plt.plot(severities, natural_accuracies, marker='s', linestyle='--', color='green', label='Natural Accuracy')
         # Plot robustness accuracies
         plt.plot(severities, robustness_accuracies, marker='o', linestyle='-', color='blue', label=f'Average Robustness Accuracy')
-        plt.title(f'Severity vs Accuracy for {train_noise} Noise')
-        plt.xlabel('Severity')
+        plt.title(f'{metric} vs Accuracy for {train_noise} Noise')
+        plt.xlabel(f'{metric}')
         plt.ylabel('Accuracy')
         plt.legend()
         plt.grid(True)
         plt.savefig(os.path.join(self.plot_dir, f'{train_noise}_{plot_name}'))
         plt.close()
 
-    def plot_combined_severity_vs_robustness(self, severities, robustness_accuracies, train_noises, plot_name='combined_severity_vs_robustness.png', robust=True):
+    def plot_combined_severity_vs_robustness(self, severities, robustness_accuracies, train_noises, metric="Severity", plot_name='combined_severity_vs_robustness.png', robust=True):
         """
         Plots severity vs natural and average robustness accuracy for all train_noises.
         :param severities: List of severities.
@@ -95,8 +96,8 @@ class Plotter:
                 plt.plot(severities, robustness_accuracies[noise], marker='o', linestyle='-', label=f'{noise} Noise', color=colors[color_index])
                 color_index += 1
 
-        plt.title(f'Severity vs Average {"Robustness" if robust else "Natural"} Accuracy for Different Noises')
-        plt.xlabel('Severity')
+        plt.title(f'{metric} vs Average {"Robustness" if robust else "Natural"} Accuracy for Different Noises')
+        plt.xlabel(f'{metric}')
         plt.ylabel('Accuracy')
         plt.legend()
         plt.grid(True)
@@ -133,6 +134,9 @@ class Plotter:
         # Adjust the subplot parameters to give the x-axis labels more space
         plt.subplots_adjust(bottom=0.15)
 
+        # Set y-axis limit
+        plt.ylim(0, 100)
+
         plt.grid(True)
         plt.savefig(os.path.join(self.plot_dir, f'{train_noise}_{plot_name}'))
         plt.close()
@@ -164,8 +168,104 @@ class Plotter:
         plt.savefig(os.path.join(self.plot_dir, plot_name))
         plt.close()
 
+    def plot_accuracy_vs_parameters(self, alpha_accuracies, w_noise_accuracies, alphas, w_noises, plot_name='accuracy_vs_parameters.png'):
+        """
+        Plots accuracies for varying alpha and w_noise values.
+        :param alpha_accuracies: Dictionary containing accuracies for each alpha value.
+        :param w_noise_accuracies: Dictionary containing accuracies for each w_noise value.
+        :param alphas: List of alpha values.
+        :param w_noises: List of w_noise values.
+        :param plot_name: Filename for the saved plot.
+        """
+        fig, ax1 = plt.subplots(figsize=(12, 6)) # Use if needed
+
+        betas = [1 / alpha if alpha != 0 else float('inf') for alpha in alphas]
+        alpha_positions = np.linspace(0, 1, len(alphas))
+
+        # Plot lines for alpha values
+        for key in alpha_accuracies:
+            # Plot alpha accuracies at the calculated positions
+            ax1.plot(alpha_positions, alpha_accuracies[key], label=f'{key} (alpha)')
+
+        # Set up the x-axis for alpha values
+        ax1.set_xlabel('Alpha')
+        ax1.set_ylabel('Accuracy')
+        ax1.tick_params(axis='x', labelcolor='blue')
+        ax1.set_xticks(alpha_positions)  # Set evenly spaced alpha positions
+        ax1.set_xticklabels([f"{alpha:.2f}" for alpha in alphas])  # Format the labels to two decimal places
+        ax1.legend(loc='upper left')
+
+        # Set up a second x-axis for w_noise values
+        ax2 = ax1.twiny()
+        ax2.set_xlabel('w_noise')
+        ax2.tick_params(axis='x', labelcolor='red')
+
+        # Calculate positions for w_noise ticks to align with the plotted w_noise data
+        w_noise_positions = np.linspace(ax1.get_xticks()[0], ax1.get_xticks()[-1], len(w_noises))
+
+        ax2.set_xticks(w_noise_positions)
+        ax2.set_xticklabels([f"{wn:.2f}" for wn in w_noises])  # Format the labels to two decimal places
+
+        # Plot lines for w_noise values
+        for key in w_noise_accuracies:
+            # Plot w_noise accuracies at the calculated positions
+            ax2.plot(w_noise_positions, w_noise_accuracies[key], label=f'{key} (w_noise)', linestyle='--')
+
+        ax2.legend(loc='upper right')
+
+        plt.title('Accuracy for varying Alpha and w_noise')
+        plt.savefig(os.path.join(self.plot_dir, plot_name))
+        plt.close()
+
+    def plot_accuracy_vs_accuracy(self, accuracies_to_plot, plot_name, y_axis):
+        """
+        Generates a plot of natural accuracy vs specified y-axis accuracy.
+        Each key forms a line in the tradeoff graph with points labeled (KEY, keys[point no]).
+        :param accuracies_to_plot: Dictionary with keys representing model types and values being another dictionary with 'x', 'y', and 'keys'.
+        :param plot_name: Filename for the saved plot.
+        :param y_axis: Label for the y-axis.
+        """
+
+        plt.figure(figsize=(12, 8))  # Larger figure size for better visibility
+        sns.set(style="whitegrid")  # Using seaborn for better aesthetics, dont need grid for now
+
+        # Using a more sophisticated color palette
+        palette = sns.color_palette("husl", len(accuracies_to_plot))
+
+        all_x_values = []
+        all_y_values = []
+
+        for index, (key, data) in enumerate(accuracies_to_plot.items()):
+            color = palette[index]
+            # Plotting the points
+            plt.scatter(data['x'], data['y'], color=color, label=key)
+            # Collecting all x and y values for adjusting limits
+            all_x_values.extend(data['x'])
+            all_y_values.extend(data['y'])
+            # Labeling the points with larger font size
+            for x_val, y_val, label in zip(data['x'], data['y'], data['keys']):
+                plt.annotate(f'({key}, {label})', (x_val, y_val), textcoords="offset points", xytext=(0,10), ha='center', fontsize=11)
+
+        # Setting the limits with buffer
+        x_buffer = (max(all_x_values) - min(all_x_values)) * 0.1  # 10% buffer
+        y_buffer = (max(all_y_values) - min(all_y_values)) * 0.1  # 10% buffer
+        plt.xlim(min(all_x_values) - x_buffer, max(all_x_values) + x_buffer)
+        plt.ylim(min(all_y_values) - y_buffer, max(all_y_values) + y_buffer)
+
+        # Increased spacing for the title and axis labels
+        plt.title(f'Natural Accuracy vs {y_axis}', fontsize=16, pad=20)
+        plt.xlabel('Natural Accuracy', fontsize=14, labelpad=15)
+        plt.ylabel(y_axis, fontsize=14, labelpad=15)
+
+        plt.xticks(fontsize=12)
+        plt.yticks(fontsize=12)
+        plt.legend(fontsize=12)
+        # plt.grid(False) # Dont need grid for now
+        plt.tight_layout()  # Adjust the padding between and around subplots
+
+        plt.savefig(os.path.join(self.plot_dir, plot_name), bbox_inches='tight')  # Save with tight bounding box
+        plt.close()
+
 # Example usage
 if __name__ == "__main__":
     plotter = Plotter()
-    # Dummy data for demonstration
-    plotter.plot_loss_accuracy([0.9, 0.7, 0.5, 0.4], [0.6, 0.7, 0.8, 0.9])

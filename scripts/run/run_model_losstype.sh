@@ -1,14 +1,15 @@
 models=("alexnet" "resnet18")
 losses=("adaptive" "ce" "trades")
 
-module load conda
-conda activate robust_DL
-module load pytorch/2.0.1
+# module load conda
+# conda activate robust_DL
+# module load pytorch/2.0.1
 
 for loss in "${losses[@]}"; do
     for model in "${models[@]}"; do
         python3 main.py \
             --mode_type train \
+            --attack_type identity \
             --model_type $model \
             --train_dataset imagenet \
             --eval_dataset imagenetC \

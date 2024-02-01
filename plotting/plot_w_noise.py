@@ -32,9 +32,9 @@ def main():
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    train_noises = ["gaussian", "uniform", "shot", "blur", "random", "dynamicBlur"]
+    train_noises = ["uniform"]
     eval_noises = ["none", "adversarial", "saturate.npy", "spatter.npy", "gaussian_blur.npy", "speckle_noise.npy", "jpeg_compression.npy", "pixelate.npy", "elastic_transform.npy", "contrast.npy", "brightness.npy", "fog.npy", "frost.npy", "snow.npy", "zoom_blur.npy", "motion_blur.npy", "defocus_blur.npy", "impulse_noise.npy", "shot_noise.npy", "gaussian_noise.npy"]
-    severities = [0.05, 0.1, 0.25, 0.5, 0.75, 1.0]
+    w_noises = [0.05, 0.1, 0.25, 0.5, 0.75, 1.0]
 
     if args.model_type == 'alexnet':
         model = AlexNet().to(device)
@@ -52,16 +52,16 @@ def main():
 
     for train_noise in train_noises:
         logger.log(f"EVAL STARTED FOR {train_noise} NOISE")
-        severity_accuracies = {}
+        w_noise_accuracies = {}
 
         natural_accuracies = []
         robustness_accuracies = []
 
-        for severity in severities:
-            logger.log(f"ON SEVERITY = {severity}")
+        for w_noise in w_noises:
+            logger.log(f"ON W_NOISE = {w_noise}")
 
             args.train_noise = train_noise
-            args.severity = severity
+            args.w_noise = w_noise
 
             config_id = get_config_id(args)
             model_pt = os.path.join("results", "models", f"{config_id}.pt")
@@ -75,8 +75,8 @@ def main():
             data = Data(train_loader, valid_loader, test_loader, None)
             configuration = Configuration(data, model, None, None, attack, config_id)
 
-            # Initialize a list to keep track of all robustness_accuracies for this severity across eval_noises
-            severity_robustness_accuracies = []
+            # Initialize a list to keep track of all robustness_accuracies for this w_noise across eval_noises
+            w_noise_robustness_accuracies = []
 
             for eval_noise in eval_noises:
                 logger.log(f"ON EVALUATION NOISE = {eval_noise}")
@@ -87,7 +87,7 @@ def main():
                         natural_accuracy = accuracy(configuration, device)
                         save_to_key(natural_accuracy_path, configuration.id, natural_accuracy)
                     natural_accuracies.append(natural_accuracy)
-                    severity_robustness_accuracies.append(natural_accuracy)
+                    w_noise_robustness_accuracies.append(natural_accuracy)
                     continue
 
                 attack_loader = data_loader.get_attack_loader(eval_noise)
@@ -109,26 +109,26 @@ def main():
                 if robustness_accuracy is None:
                     robustness_accuracy = robust_accuracy(configuration, device)
                     save_to_key(robustness_accuracy_path, configuration.id, robustness_accuracy)
-                severity_robustness_accuracies.append(robustness_accuracy)
+                w_noise_robustness_accuracies.append(robustness_accuracy)
                 configuration.attack = attack
                 args.eval_noise = default_noise
 
-            # Disclude natural accuracy from this
-            robustness_accuracies.append(sum(severity_robustness_accuracies[1:]) / len(severity_robustness_accuracies[1:]))
-            severity_accuracies[severity] = severity_robustness_accuracies
+            # Disclude natural and adversarial accuracy from this
+            robustness_accuracies.append(sum(w_noise_robustness_accuracies[2:]) / len(w_noise_robustness_accuracies[1:]))
+            w_noise_accuracies[w_noise] = w_noise_robustness_accuracies
 
         total_robustness_accuracies[train_noise] = robustness_accuracies
         total_natural_accuracies[train_noise] = natural_accuracies
 
         configuration.id = get_config_id(args, disclude=['eval_noise'])
 
-        plotter.plot_severity_vs_robustness(severities, natural_accuracies, robustness_accuracies, train_noise, plot_name=f"{configuration.id}_severity_vs_robustness.png")
-        plotter.plot_eval_noise_bar_chart(eval_noises, severity_accuracies, train_noise, plot_name=f"{configuration.id}_noise_vs_robustness.png")
+        plotter.plot_severity_vs_robustness(w_noises, natural_accuracies, robustness_accuracies, train_noise, plot_name=f"{configuration.id}_w_noise_vs_robustness.png", metric="w_noise")
+        plotter.plot_eval_noise_bar_chart(eval_noises, w_noise_accuracies, train_noise, plot_name=f"{configuration.id}_noise_vs_robustness.png", metric="w_noise")
     
-    plotter.plot_combined_severity_vs_robustness(severities, total_robustness_accuracies, train_noises, plot_name=f"{configuration.id}_combined_severity_vs_robustness.png")
-    plotter.plot_combined_severity_vs_robustness(severities, total_natural_accuracies, train_noises, plot_name=f"{configuration.id}_combined_severity_vs_natural.png", robust=False)
+    plotter.plot_combined_severity_vs_robustness(w_noises, total_robustness_accuracies, train_noises, plot_name=f"{configuration.id}_combined_w_noise_vs_robustness.png", metric="w_noise")
+    plotter.plot_combined_severity_vs_robustness(w_noises, total_natural_accuracies, train_noises, plot_name=f"{configuration.id}_combined_w_noise_vs_natural.png", robust=False, metric="w_noise")
 
-    plotter.plot_tradeoff(severities, total_natural_accuracies, total_robustness_accuracies, plot_name=f"{configuration.id}_tradeoff.png")
+    plotter.plot_tradeoff(w_noises, total_natural_accuracies, total_robustness_accuracies, plot_name=f"{configuration.id}_tradeoff_w_noise.png")
 
 if __name__ == "__main__":
     main()

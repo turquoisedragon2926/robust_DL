@@ -1,7 +1,7 @@
+lrs=(0.005 0.01 0.03 0.05)
 severities=(0.05 0.1 0.25 0.5 0.75 1)
-train_noises=("uniform") # ("blur" "gaussian" "uniform" "shot" "dynamicBlur" "random")
 
-for train_noise in "${train_noises[@]}"; do
+for lr in "${lrs[@]}"; do
     for severity in "${severities[@]}"; do
         bash scripts/experiment.sh \
             --mode_type train \
@@ -10,13 +10,13 @@ for train_noise in "${train_noises[@]}"; do
             --eval_dataset cifar10C \
             --model_type resnet18 \
             --loss_type adaptive \
-            --train_noise $train_noise \
+            --train_noise uniform \
             --eval_noise gaussian_noise.npy \
             --epochs 100 \
             --valid_size 0.2 \
             --eval_interval 1 \
             --severity $severity \
-            --w_noise 0.1 \
-            --tau1 10
+            --lr $lr \
+            --num_samples 10
     done
 done

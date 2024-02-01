@@ -32,9 +32,9 @@ def main():
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    train_noises = ["gaussian", "uniform", "shot", "blur", "random", "dynamicBlur"]
     eval_noises = ["none", "adversarial", "saturate.npy", "spatter.npy", "gaussian_blur.npy", "speckle_noise.npy", "jpeg_compression.npy", "pixelate.npy", "elastic_transform.npy", "contrast.npy", "brightness.npy", "fog.npy", "frost.npy", "snow.npy", "zoom_blur.npy", "motion_blur.npy", "defocus_blur.npy", "impulse_noise.npy", "shot_noise.npy", "gaussian_noise.npy"]
     severities = [0.05, 0.1, 0.25, 0.5, 0.75, 1.0]
+    lrs = [0.005, 0.01, 0.03, 0.05]
 
     if args.model_type == 'alexnet':
         model = AlexNet().to(device)
@@ -50,8 +50,8 @@ def main():
     total_robustness_accuracies = {}
     total_natural_accuracies = {}
 
-    for train_noise in train_noises:
-        logger.log(f"EVAL STARTED FOR {train_noise} NOISE")
+    for lr in lrs:
+        logger.log(f"EVAL STARTED FOR LR = {lr}")
         severity_accuracies = {}
 
         natural_accuracies = []
@@ -60,7 +60,7 @@ def main():
         for severity in severities:
             logger.log(f"ON SEVERITY = {severity}")
 
-            args.train_noise = train_noise
+            args.lr = lr
             args.severity = severity
 
             config_id = get_config_id(args)
@@ -105,7 +105,7 @@ def main():
                 data.attack_loader = attack_loader
                 configuration.data = data
 
-                robustness_accuracy = load_from_key(robustness_accuracy_path, configuration.id)
+                robustness_accuracy = None # load_from_key(robustness_accuracy_path, configuration.id)
                 if robustness_accuracy is None:
                     robustness_accuracy = robust_accuracy(configuration, device)
                     save_to_key(robustness_accuracy_path, configuration.id, robustness_accuracy)
@@ -117,18 +117,18 @@ def main():
             robustness_accuracies.append(sum(severity_robustness_accuracies[1:]) / len(severity_robustness_accuracies[1:]))
             severity_accuracies[severity] = severity_robustness_accuracies
 
-        total_robustness_accuracies[train_noise] = robustness_accuracies
-        total_natural_accuracies[train_noise] = natural_accuracies
+        total_robustness_accuracies[lr] = robustness_accuracies
+        total_natural_accuracies[lr] = natural_accuracies
 
         configuration.id = get_config_id(args, disclude=['eval_noise'])
 
-        plotter.plot_severity_vs_robustness(severities, natural_accuracies, robustness_accuracies, train_noise, plot_name=f"{configuration.id}_severity_vs_robustness.png")
-        plotter.plot_eval_noise_bar_chart(eval_noises, severity_accuracies, train_noise, plot_name=f"{configuration.id}_noise_vs_robustness.png")
+        plotter.plot_severity_vs_robustness(severities, natural_accuracies, robustness_accuracies, lr, plot_name=f"{configuration.id}_severity_vs_robustness_lr_adaptive.png")
+        plotter.plot_eval_noise_bar_chart(eval_noises, severity_accuracies, lr, plot_name=f"{configuration.id}_noise_vs_robustness_lr_adaptive.png")
     
-    plotter.plot_combined_severity_vs_robustness(severities, total_robustness_accuracies, train_noises, plot_name=f"{configuration.id}_combined_severity_vs_robustness.png")
-    plotter.plot_combined_severity_vs_robustness(severities, total_natural_accuracies, train_noises, plot_name=f"{configuration.id}_combined_severity_vs_natural.png", robust=False)
+    plotter.plot_combined_severity_vs_robustness(severities, total_robustness_accuracies, lrs, plot_name=f"{configuration.id}_combined_severity_vs_robustness_lr_adaptive.png")
+    plotter.plot_combined_severity_vs_robustness(severities, total_natural_accuracies, lrs, plot_name=f"{configuration.id}_combined_severity_vs_natural_lr_adaptive.png", robust=False)
 
-    plotter.plot_tradeoff(severities, total_natural_accuracies, total_robustness_accuracies, plot_name=f"{configuration.id}_tradeoff.png")
+    plotter.plot_tradeoff(severities, total_natural_accuracies, total_robustness_accuracies, plot_name=f"{configuration.id}_tradeoff_lr_adaptive.png")
 
 if __name__ == "__main__":
     main()

@@ -5,6 +5,7 @@ for loss in "${losses[@]}"; do
     for model in "${models[@]}"; do
         bash scripts/experiment.sh \
             --mode_type train \
+            --attack_type identity \
             --train_dataset imagenet \
             --eval_dataset imagenetC \
             --model_type $model \

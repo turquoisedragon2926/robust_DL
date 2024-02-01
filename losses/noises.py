@@ -12,6 +12,10 @@ class NoiseFunction:
     def add_noise(self, data):
         raise NotImplementedError
 
+class EmptyNoise(NoiseFunction):
+    def add_noise(self, data):
+        return data, 0
+    
 class GaussianNoise(NoiseFunction):
     def add_noise(self, data):
         noise = torch.randn(data.size()) * self.severity
@@ -84,7 +88,7 @@ class DynamicBlurNoise(NoiseFunction):
 
         # Create a 1D Gaussian kernel
         kernel_1d = torch.tensor([1.0], device=self.device).new_full((kernel_size,), 1.0)
-        i_rand=range((kernel_size // 2) + 1)
+        i_rand = list(range((kernel_size // 2) + 1))
         np.random.shuffle(i_rand[1:])
 
         for i in range(1, (kernel_size // 2) + 1):
@@ -153,7 +157,9 @@ class NoiseFunctionFactory:
             'gaussian': GaussianNoise,
             'uniform': UniformNoise,
             'shot': ShotNoise,
-            'blur': BlurNoise
+            'blur': BlurNoise,
+            'dynamicBlur': DynamicBlurNoise,
+            'none': EmptyNoise
         }
         if train_noise == 'random':
             return random.choice(list(noise_classes.values()))(severity)
