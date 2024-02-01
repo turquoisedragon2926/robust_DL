@@ -57,7 +57,7 @@ def main():
     Logger.initialize(log_filename=f"{config_id}.txt")
     logger = Logger.get_instance()
 
-    data_loader = DataLoaderFactory(root='../../robust_DL', valid_size=args.valid_size, train_dataset=args.train_dataset, eval_dataset=args.eval_dataset)
+    data_loader = DataLoaderFactory(root='../../robust_DL/data', valid_size=args.valid_size, train_dataset=args.train_dataset, eval_dataset=args.eval_dataset)
     train_loader, valid_loader, test_loader = data_loader.get_data_loaders()
 
     attack_loader = data_loader.get_attack_loader(args.eval_noise)
