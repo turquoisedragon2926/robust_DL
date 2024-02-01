@@ -238,7 +238,7 @@ class Plotter:
             plt.scatter(data['x'], data['y'], color=color, label=key)
             # Labeling the points
             for x_val, y_val, label in zip(data['x'], data['y'], data['keys']):
-                plt.annotate(f'({key}, {label})', (x_val, y_val), textcoords="offset points", xytext=(0,10), ha='center', fontsize=9)
+                plt.annotate(f'({key}, {label})', (x_val, y_val), textcoords="offset points", xytext=(0,10), ha='center', fontsize=14)
 
         plt.title(f'Natural Accuracy vs {y_axis}', fontsize=16)
         plt.xlabel('Natural Accuracy', fontsize=14)
