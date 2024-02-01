@@ -102,7 +102,7 @@ def main():
             # Load up the new evaluation data
             data.attack_loader = attack_loader
             configuration.data = data
-            robustness_accuracy = load_from_key(robustness_accuracy_path, configuration.id)
+            robustness_accuracy = None # load_from_key(robustness_accuracy_path, configuration.id) # Force recompute
             if robustness_accuracy is None:
                 robustness_accuracy = robust_accuracy(configuration, device)
                 save_to_key(robustness_accuracy_path, configuration.id, robustness_accuracy)
@@ -164,7 +164,7 @@ def main():
             # Load up the new evaluation data
             data.attack_loader = attack_loader
             configuration.data = data
-            robustness_accuracy = load_from_key(robustness_accuracy_path, configuration.id)
+            robustness_accuracy = None # load_from_key(robustness_accuracy_path, configuration.id) # Force recompute
             if robustness_accuracy is None:
                 robustness_accuracy = robust_accuracy(configuration, device)
                 save_to_key(robustness_accuracy_path, configuration.id, robustness_accuracy)
