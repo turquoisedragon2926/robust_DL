@@ -17,6 +17,6 @@ for lr in "${lrs[@]}"; do
             --eval_interval 1 \
             --severity $severity \
             --lr $lr \
-            --num_samples 10
+            --num_samples 1
     done
 done
