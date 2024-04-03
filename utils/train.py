@@ -4,9 +4,6 @@ import torch
 from .evaluate import accuracy, robust_accuracy
 from .logger import Logger
 from .plotter import Plotter
-import random
-
-random.seed(2024)
 
 def train(configuration, args, device):
   logger = Logger.get_instance()
