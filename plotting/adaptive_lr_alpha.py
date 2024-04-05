@@ -2,6 +2,7 @@ from __future__ import print_function
 import os
 import sys
 import torch
+import random
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -19,6 +20,9 @@ from utils.components import Configuration, Data
 from utils.data_loader import DataLoaderFactory
 from utils.evaluate import accuracy, robust_accuracy
 from utils.utils import parse_args, get_config_id, save_to_key, load_from_key
+
+random.seed(2024)
+torch.manual_seed(2024)
 
 def main():
     args = parse_args()
