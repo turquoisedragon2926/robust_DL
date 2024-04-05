@@ -23,6 +23,7 @@ from utils.utils import parse_args, get_config_id, save_to_key, load_from_key
 
 random.seed(2024)
 torch.manual_seed(2024)
+torch.cuda.manual_seed_all(2024)
 
 def main():
     args = parse_args()
