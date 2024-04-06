@@ -113,7 +113,7 @@ def main():
                 robustness_accuracy = None #if (severity == 1.0 and lr == 0.05) else load_from_key(robustness_accuracy_path, configuration.id)
                 if robustness_accuracy is None:
                     robustness_accuracy = robust_accuracy(configuration, device)
-                    # save_to_key(robustness_accuracy_path, configuration.id, robustness_accuracy)
+                    save_to_key(robustness_accuracy_path, configuration.id, robustness_accuracy)
                 severity_robustness_accuracies.append(robustness_accuracy)
                 configuration.attack = attack
                 args.eval_noise = default_noise
