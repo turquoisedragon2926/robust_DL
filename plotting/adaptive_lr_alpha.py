@@ -110,7 +110,7 @@ def main():
                 data.attack_loader = attack_loader
                 configuration.data = data
 
-                robustness_accuracy = None #if (severity == 1.0 and lr == 0.05) else load_from_key(robustness_accuracy_path, configuration.id)
+                robustness_accuracy = load_from_key(robustness_accuracy_path, configuration.id)
                 if robustness_accuracy is None:
                     robustness_accuracy = robust_accuracy(configuration, device)
                     save_to_key(robustness_accuracy_path, configuration.id, robustness_accuracy)
