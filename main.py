@@ -7,6 +7,10 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
+random.seed(2024)
+torch.manual_seed(2024)
+torch.cuda.manual_seed_all(2024)
+
 from losses.trades import trades_loss
 from losses.ce import ce_loss
 from losses.adaptive import adaptive_loss
@@ -26,10 +30,6 @@ from utils.data_loader import DataLoaderFactory
 from utils.train import train
 from utils.evaluate import accuracy, robust_accuracy
 from utils.utils import save_to_key, parse_args, get_config_id
-
-random.seed(2024)
-torch.manual_seed(2024)
-torch.cuda.manual_seed_all(2024)
 
 def general_adversarial_loss_fn(alpha=0.00784, epsilon=0.0314, k=7):
   def adversarial_loss_fn(model, data, target, optimizer):

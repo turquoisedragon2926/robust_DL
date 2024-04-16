@@ -4,6 +4,10 @@ import sys
 import torch
 import random
 
+random.seed(2024)
+torch.manual_seed(2024)
+torch.cuda.manual_seed_all(2024)
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from models.wideresnet import *
@@ -21,10 +25,6 @@ from utils.data_loader import DataLoaderFactory
 from utils.evaluate import accuracy, robust_accuracy
 from utils.utils import parse_args, get_config_id, save_to_key, load_from_key
 
-random.seed(2024)
-torch.manual_seed(2024)
-torch.cuda.manual_seed_all(2024)
-
 def main():
     args = parse_args()
 
@@ -38,8 +38,11 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     eval_noises = ["none", "adversarial", "saturate.npy", "spatter.npy", "gaussian_blur.npy", "speckle_noise.npy", "jpeg_compression.npy", "pixelate.npy", "elastic_transform.npy", "contrast.npy", "brightness.npy", "fog.npy", "frost.npy", "snow.npy", "zoom_blur.npy", "motion_blur.npy", "defocus_blur.npy", "impulse_noise.npy", "shot_noise.npy", "gaussian_noise.npy"]
-    severities = [0.05, 0.1, 0.25, 0.5, 0.75, 1.0]
-    lrs = [0.005, 0.01, 0.03, 0.05]
+    # severities = [0.05, 0.1, 0.25, 0.5, 0.75, 1.0]
+    # lrs = [0.005, 0.01, 0.03, 0.05]
+
+    severities = [0.25]
+    lrs = [0.05]
 
     if args.model_type == 'alexnet':
         model = AlexNet().to(device)
