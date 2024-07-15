@@ -30,7 +30,7 @@ train_noises=("uniform" "blur" "gaussian" "uniform" "shot" "dynamicBlur" "random
 
 for train_noise in "${train_noises[@]}"; do
     for severity in "${severities[@]}"; do
-        bash scripts/experiment.sh \
+        python3 main.py \
             --mode_type train \
             --attack_type identity \
             --train_dataset cifar10 \
