@@ -11,13 +11,13 @@ for loss in "${losses[@]}"; do
             --mode_type train \
             --attack_type identity \
             --model_type $model \
-            --train_dataset imagenet \
-            --eval_dataset imagenetC \
+            --train_dataset cifar10 \
+            --eval_dataset cifar10C \
             --loss_type $loss \
             --train_noise blur \
             --eval_noise gaussian_noise.npy \
             --epochs 1 \
-            --valid_size 0.2 \
+            --valid_size 0.8 \
             --eval_interval 1 \
             --severity 0.05 \
             --w_noise 0.1 \
