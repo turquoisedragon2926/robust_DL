@@ -41,7 +41,7 @@ for train_noise in "${train_noises[@]}"; do
             --eval_noise gaussian_noise.npy \
             --epochs 1 \
             --valid_size 0.5 \
-            --eval_interval 1 \
+            --eval_interval 10 \
             --severity $severity \
             --w_noise 0.1 \
             --tau1 10
