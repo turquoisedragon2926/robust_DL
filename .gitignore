@@ -4,3 +4,4 @@
 notes.md
 results/
 plots/
+*.pyc
