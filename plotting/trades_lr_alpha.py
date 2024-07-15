@@ -2,6 +2,8 @@ from __future__ import print_function
 import os
 import sys
 import torch
+import random
+import numpy as np
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -20,8 +22,21 @@ from utils.data_loader import DataLoaderFactory
 from utils.evaluate import accuracy, robust_accuracy
 from utils.utils import parse_args, get_config_id, save_to_key, load_from_key
 
+def set_random_seeds(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
 def main():
     args = parse_args()
+
+    # Set random seeds for reproducibility
+    set_random_seeds(2024)
 
     Logger.initialize(log_filename=f"plotting.txt")
     logger = Logger.get_instance()

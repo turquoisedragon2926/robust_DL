@@ -3,3 +3,6 @@
 *.txt
 notes.md
 results/
+*.png
+.DS_Store
+._.DS_Store
