@@ -6,10 +6,7 @@ import random
 import torch
 import torch.nn as nn
 import torch.optim as optim
-
-random.seed(2024)
-torch.manual_seed(2024)
-torch.cuda.manual_seed_all(2024)
+import numpy as np
 
 from losses.trades import trades_loss
 from losses.ce import ce_loss
@@ -30,6 +27,16 @@ from utils.data_loader import DataLoaderFactory
 from utils.train import train
 from utils.evaluate import accuracy, robust_accuracy
 from utils.utils import save_to_key, parse_args, get_config_id
+
+def set_random_seeds(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
 def general_adversarial_loss_fn(alpha=0.00784, epsilon=0.0314, k=7):
   def adversarial_loss_fn(model, data, target, optimizer):
@@ -62,6 +69,8 @@ def main():
     Logger.initialize(log_filename=f"{config_id}.txt")
     logger = Logger.get_instance()
 
+    set_random_seeds(2024)  # Set random seeds for reproducibility
+    
     data_loader = DataLoaderFactory(root='data', valid_size=args.valid_size, train_dataset=args.train_dataset, eval_dataset=args.eval_dataset)
     train_loader, valid_loader, test_loader = data_loader.get_data_loaders()
 
