@@ -1,8 +1,8 @@
 # lrs=(0.005 0.01 0.03 0.05)
 # severities=(0.05 0.1 0.25 0.5 0.75 1)
 
-lrs=(0.05)
-severities=(0.25)
+lrs=(0.03 0.05)
+severities=(0.05 0.1)
 
 for lr in "${lrs[@]}"; do
     for severity in "${severities[@]}"; do
