@@ -25,4 +25,4 @@ for n in "${ns[@]}"; do
                 --num_samples $n
         done
     done
-end
+done
