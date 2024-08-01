@@ -3,6 +3,7 @@ import os
 import sys
 import torch
 import random
+from collections import defaultdict
 
 import numpy as np
 
@@ -70,86 +71,101 @@ def main():
 
     total_robustness_accuracies = {}
     total_natural_accuracies = {}
-
-    for lr in lrs:
-        logger.log(f"EVAL STARTED FOR LR = {lr}")
-        severity_accuracies = {}
-
-        natural_accuracies = []
-        robustness_accuracies = []
-
-        for severity in severities:
-            logger.log(f"ON SEVERITY = {severity}")
-
-            args.lr = lr
-            args.severity = severity
-
-            config_id = get_config_id(args)
-            model_pt = os.path.join("results", "models", f"{config_id}.pt")
-            model.load_state_dict(torch.load(model_pt))
-
-            if args.attack_type == 'identity':
-                attack = identity_attack
-            elif args.attack_type == 'pgd':
-                attack = pgd_attack
     
-            data = Data(train_loader, valid_loader, test_loader, None)
-            configuration = Configuration(data, model, None, None, attack, config_id)
+    num_samples_robustness_accuracies = defaultdict(list)
+    num_samples_adversarial_accuracies = defaultdict(list)
+    num_samples_natural_accuracies = defaultdict(list)
+    for ns_value in ns:
+        args.num_samples = ns_value
+        for lr in lrs:
+            logger.log(f"EVAL STARTED FOR LR = {lr}")
+            severity_accuracies = {}
 
-            # Initialize a list to keep track of all robustness_accuracies for this severity across eval_noises
-            severity_robustness_accuracies = []
+            robustness_accuracies = []
+            adversarial_accuracies = []
+            natural_accuracies = []
 
-            for eval_noise in eval_noises:
-                logger.log(f"ON EVALUATION NOISE = {eval_noise}")
+            for severity in severities:
+                logger.log(f"ON SEVERITY = {severity}")
 
-                if eval_noise == 'none':
-                    natural_accuracy = load_from_key(natural_accuracy_path, configuration.id)
-                    if natural_accuracy is None:
-                        natural_accuracy = accuracy(configuration, device)
-                        save_to_key(natural_accuracy_path, configuration.id, natural_accuracy)
-                    natural_accuracies.append(natural_accuracy)
-                    severity_robustness_accuracies.append(natural_accuracy)
-                    continue
+                args.lr = lr
+                args.severity = severity
 
-                attack_loader = data_loader.get_attack_loader(eval_noise)
+                config_id = get_config_id(args)
+                model_pt = os.path.join("results", "models", f"{config_id}.pt")
+                model.load_state_dict(torch.load(model_pt))
 
-                # TODO: Abstract attack and eval noise to common framework
-                if eval_noise == 'adversarial':
-                    configuration.attack = pgd_attack
+                if args.attack_type == 'identity':
+                    attack = identity_attack
+                elif args.attack_type == 'pgd':
+                    attack = pgd_attack
+        
+                data = Data(train_loader, valid_loader, test_loader, None)
+                configuration = Configuration(data, model, None, None, attack, config_id)
 
-                # Change noise to save properly in json
-                default_noise = args.eval_noise
-                args.eval_noise = eval_noise
-                configuration.id = get_config_id(args)
+                # Initialize a list to keep track of all robustness_accuracies for this severity across eval_noises
+                severity_robustness_accuracies = []
 
-                # Load up the new evaluation data
-                data.attack_loader = attack_loader
-                configuration.data = data
+                for eval_noise in eval_noises:
+                    logger.log(f"ON EVALUATION NOISE = {eval_noise}")
 
-                robustness_accuracy = None # load_from_key(robustness_accuracy_path, configuration.id)
-                if robustness_accuracy is None:
-                    robustness_accuracy = robust_accuracy(configuration, device)
-                    save_to_key(robustness_accuracy_path, configuration.id, robustness_accuracy)
-                severity_robustness_accuracies.append(robustness_accuracy)
-                configuration.attack = attack
-                args.eval_noise = default_noise
+                    if eval_noise == 'none':
+                        natural_accuracy = load_from_key(natural_accuracy_path, configuration.id)
+                        if natural_accuracy is None:
+                            natural_accuracy = accuracy(configuration, device)
+                            save_to_key(natural_accuracy_path, configuration.id, natural_accuracy)
+                        natural_accuracies.append(natural_accuracy)
+                        severity_robustness_accuracies.append(natural_accuracy)
+                        continue
 
-            # Disclude natural accuracy from this
-            robustness_accuracies.append(sum(severity_robustness_accuracies[2:]) / len(severity_robustness_accuracies[1:]))
-            severity_accuracies[severity] = severity_robustness_accuracies
+                    attack_loader = data_loader.get_attack_loader(eval_noise)
 
-        total_robustness_accuracies[lr] = robustness_accuracies
-        total_natural_accuracies[lr] = natural_accuracies
+                    # TODO: Abstract attack and eval noise to common framework
+                    if eval_noise == 'adversarial':
+                        configuration.attack = pgd_attack
 
-        configuration.id = get_config_id(args, disclude=['eval_noise'])
+                    # Change noise to save properly in json
+                    default_noise = args.eval_noise
+                    args.eval_noise = eval_noise
+                    configuration.id = get_config_id(args)
 
-        plotter.plot_severity_vs_robustness(severities, natural_accuracies, robustness_accuracies, lr, plot_name=f"{configuration.id}_severity_adaptive.png")
-        plotter.plot_eval_noise_bar_chart(eval_noises, severity_accuracies, lr, plot_name=f"{configuration.id}_noise_adaptive.png")
-    
+                    # Load up the new evaluation data
+                    data.attack_loader = attack_loader
+                    configuration.data = data
+
+                    robustness_accuracy = None # load_from_key(robustness_accuracy_path, configuration.id)
+                    if robustness_accuracy is None:
+                        robustness_accuracy = robust_accuracy(configuration, device)
+                        save_to_key(robustness_accuracy_path, configuration.id, robustness_accuracy)
+                    severity_robustness_accuracies.append(robustness_accuracy)
+                    configuration.attack = attack
+                    args.eval_noise = default_noise
+
+                # Disclude natural accuracy from this
+                robustness_accuracies.append(sum(severity_robustness_accuracies[2:]) / len(severity_robustness_accuracies[1:]))
+                adversarial_accuracies.append(severity_robustness_accuracies[1])
+                natural_accuracies.append(severity_robustness_accuracies[0])
+
+            num_samples_robustness_accuracies[lr].append(np.mean(robustness_accuracies))
+            num_samples_adversarial_accuracies[lr].append(np.mean(adversarial_accuracies))
+            num_samples_natural_accuracies[lr].append(np.mean(natural_accuracies))
+            
+            total_robustness_accuracies[lr] = robustness_accuracies
+            total_natural_accuracies[lr] = natural_accuracies
+
+            configuration.id = get_config_id(args, disclude=['eval_noise'])
+
+            plotter.plot_severity_vs_robustness(severities, natural_accuracies, robustness_accuracies, lr, plot_name=f"{configuration.id}_severity_adaptive.png")
+            plotter.plot_eval_noise_bar_chart(eval_noises, severity_accuracies, lr, plot_name=f"{configuration.id}_noise_adaptive.png")
+        
     plotter.plot_combined_severity_vs_robustness(severities, total_robustness_accuracies, lrs, plot_name=f"{configuration.id}_combined_adaptive.png")
     plotter.plot_combined_severity_vs_robustness(severities, total_natural_accuracies, lrs, plot_name=f"{configuration.id}_combined_adaptive.png", robust=False)
 
     plotter.plot_tradeoff(severities, total_natural_accuracies, total_robustness_accuracies, plot_name=f"{configuration.id}_tradeoff_adaptive.png")
 
+    plotter.plot_samples_vs_accuracies(ns, num_samples_robustness_accuracies, 'Average Robustness', plot_name='num_samples_vs_average_robustness.png')
+    plotter.plot_samples_vs_accuracies(ns, num_samples_adversarial_accuracies, 'Adversarial', plot_name='num_samples_vs_adversarial.png')
+    plotter.plot_samples_vs_accuracies(ns, num_samples_natural_accuracies, 'Natural', plot_name='num_samples_vs_natural.png')
+    
 if __name__ == "__main__":
     main()

@@ -265,6 +265,18 @@ class Plotter:
 
         plt.savefig(os.path.join(self.plot_dir, plot_name), bbox_inches='tight')  # Save with tight bounding box
         plt.close()
+        
+    def plot_samples_vs_accuracies(self, ns, accuracies, accuracy_type, plot_name):
+        plt.figure(figsize=(10, 5))
+        for lr, values in accuracies.items():
+            plt.plot(ns, values, marker='o', linestyle='-', label=f'LR = {lr}')
+        plt.title(f'Num of Samples vs {accuracy_type} Accuracy')
+        plt.xlabel('Number of Samples')
+        plt.ylabel(f'{accuracy_type} Accuracy')
+        plt.legend()
+        plt.grid(True)
+        plt.savefig(os.path.join(self.plot_dir, plot_name))
+        plt.close()
 
 # Example usage
 if __name__ == "__main__":
