@@ -144,6 +144,7 @@ def main():
                 # Disclude natural accuracy from this
                 robustness_accuracies.append(sum(severity_robustness_accuracies[2:]) / len(severity_robustness_accuracies[1:]))
                 adversarial_accuracies.append(severity_robustness_accuracies[1])
+                severity_accuracies[severity] = severity_robustness_accuracies
                 # natural_accuracies.append(severity_robustness_accuracies[0])
 
             num_samples_robustness_accuracies[lr].append(np.mean(robustness_accuracies))
