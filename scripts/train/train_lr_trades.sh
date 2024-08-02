@@ -1,5 +1,8 @@
-alphas=(0.1 0.25 1 3)
-lrs=(0.005 0.01 0.03 0.05)
+# alphas=(0.1 0.25 1 3)
+# lrs=(0.005 0.01 0.03 0.05)
+
+alphas=(0.1 0.25)
+lrs=(0.01 0.03)
 
 for lr in "${lrs[@]}"; do
     for alpha in "${alphas[@]}"; do
