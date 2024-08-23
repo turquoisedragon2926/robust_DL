@@ -1,4 +1,4 @@
-python3 scripts/plot.sh \
+bash scripts/plot.sh \
     --mode_type train \
     --attack_type identity \
     --train_dataset cifar10 \
