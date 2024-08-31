@@ -194,7 +194,7 @@ if __name__ == "__main__":
             ax.imshow(np.clip(img, 0, 1))
             ax.set_title(f"Label: {lbl}")
             ax.axis('off')
-        plt.show()
+        plt.savefig("test.png")
 
     # Initialize the DataLoaderFactory
     factory = DataLoaderFactory(root='./data', valid_size=0.1, train_dataset='imagenet', eval_dataset='imagenetC')
