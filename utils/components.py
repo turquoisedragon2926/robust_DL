@@ -2,6 +2,7 @@ from torch.utils.data import Dataset
 import json
 from PIL import Image
 from torch.utils.data import Dataset
+import os
 
 class Data:
   def __init__(self, train_loader, valid_loader, test_loader, attack_loader):
