@@ -123,3 +123,39 @@ class DataLoaderFactory:
         testset = datasets.ImageNet(root=os.path.join(self.root, 'val'), split='val', download=True, transform=transform_test)
 
         return trainset, validset, testset
+
+if __name__ == "__main__":
+    import matplotlib.pyplot as plt
+
+    def plot_images_grid(images, labels, nrow=2, ncol=2):
+        fig, axs = plt.subplots(nrow, ncol, figsize=(8, 8))
+        axs = axs.flatten()
+        for img, lbl, ax in zip(images, labels, axs):
+            img = img.permute(1, 2, 0)  # Change to HWC format for plotting
+            img = img * torch.tensor([0.229, 0.224, 0.225]) + torch.tensor([0.485, 0.456, 0.406])  # Unnormalize
+            img = img.numpy()
+            ax.imshow(np.clip(img, 0, 1))
+            ax.set_title(f"Label: {lbl}")
+            ax.axis('off')
+        plt.show()
+
+    # Initialize the DataLoaderFactory
+    factory = DataLoaderFactory(root='./data', valid_size=0.1, train_dataset='imagenet', eval_dataset='imagenetC')
+
+    # Get ImageNet loaders
+    train_loader, valid_loader, test_loader = factory.get_data_loaders()
+
+    # Get a batch of images from the training set
+    images_train, labels_train = next(iter(train_loader))
+
+    # Plot the images in a 2x2 grid
+    plot_images_grid(images_train, labels_train, nrow=2, ncol=2)
+
+    # Get ImageNet-C attack loader (replace 'noise.npy' with the actual noise file you have)
+    imagenetc_attack_loader = factory.get_attack_loader(eval_noise='noise.npy')
+
+    # Get a batch of images from ImageNet-C
+    images_attack, labels_attack = next(iter(imagenetc_attack_loader))
+
+    # Plot the images in a 2x2 grid
+    plot_images_grid(images_attack, labels_attack, nrow=2, ncol=2)
