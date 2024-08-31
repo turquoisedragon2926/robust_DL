@@ -39,7 +39,7 @@ bash scripts/experiment.sh \
     --attack_type identity \
     --train_dataset imagenet \
     --eval_dataset imagenetC \
-    --model_type alexnet \
+    --model_type resnet18 \
     --loss_type adaptive \
     --train_noise uniform \
     --eval_noise gaussian_noise.npy \

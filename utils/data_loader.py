@@ -8,13 +8,16 @@ from torch.utils.data import DataLoader, SubsetRandomSampler
 import json
 from PIL import Image
 from torch.utils.data import Dataset
+from robust_DL.losses.noises import NoiseFunctionFactory
 
 class ImageNetKaggle(Dataset):
-    def __init__(self, root, split, transform=None):
+    def __init__(self, root, split, transform=None, n_classes=10):
         self.samples = []
         self.targets = []
         self.transform = transform
         self.syn_to_class = {}
+        self.n_classes = n_classes
+
         with open(os.path.join(root, "imagenet_class_index.json"), "rb") as f:
                     json_file = json.load(f)
                     for class_id, v in json_file.items():
@@ -26,17 +29,19 @@ class ImageNetKaggle(Dataset):
             if split == "train":
                 syn_id = entry
                 target = self.syn_to_class[syn_id]
-                syn_folder = os.path.join(samples_dir, syn_id)
-                for sample in os.listdir(syn_folder):
-                    sample_path = os.path.join(syn_folder, sample)
-                    self.samples.append(sample_path)
-                    self.targets.append(target)
+                if target < self.n_classes:
+                    syn_folder = os.path.join(samples_dir, syn_id)
+                    for sample in os.listdir(syn_folder):
+                        sample_path = os.path.join(syn_folder, sample)
+                        self.samples.append(sample_path)
+                        self.targets.append(target)
             elif split == "val":
                 syn_id = self.val_to_syn[entry]
                 target = self.syn_to_class[syn_id]
-                sample_path = os.path.join(samples_dir, entry)
-                self.samples.append(sample_path)
-                self.targets.append(target)
+                if target < self.n_classes:
+                    sample_path = os.path.join(samples_dir, entry)
+                    self.samples.append(sample_path)
+                    self.targets.append(target)
     def __len__(self):
             return len(self.samples)
     def __getitem__(self, idx):
@@ -140,7 +145,7 @@ class DataLoaderFactory:
 
         return trainset, validset, testset
     
-    def get_imagenetC_attack_loader(self, eval_noise):
+    def get_imagenetC_attack_loader(self, eval_noise, n_classes=10):
         transform_imagenetc = transforms.Compose([
             # TODO: might need different transforms for ImageNet
             transforms.Resize(256),
@@ -148,13 +153,16 @@ class DataLoaderFactory:
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ])
+        
+        testset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'val', transform=transform_imagenetc)
+        data_loader = DataLoader(testset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers, pin_memory=self.pin_memory)
 
-        # images = np.load(os.path.join('data/ImageNet-C', eval_noise))
-        # labels = np.load('data/ImageNet-C/labels.npy')
-        # imagenetc_dataset = AttackDataset(data=images, labels=labels, transform=transform_imagenetc)
-        imagenetc_dataset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'val', transform=transform_imagenetc)
+        return data_loader
+
+        images = np.load(os.path.join('data/imagenet', eval_noise))
+        labels = np.load('data/imagenet/labels.npy')
+        imagenetc_dataset = AttackDataset(data=images, labels=labels, transform=transform_imagenetc)
         imagenetc_attack_loader = DataLoader(imagenetc_dataset, batch_size=self.batch_size, shuffle=False)
-
         return imagenetc_attack_loader
 
     def get_imagenet_loaders(self):
@@ -176,7 +184,7 @@ class DataLoaderFactory:
 
         # Load datasets, assuming you have ImageNet dataset in the specified path
         trainset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'train', transform=transform_train)
-        validset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'val', transform=transform_train)
+        validset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'train', transform=transform_train)
         testset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'val', transform=transform_test)
 
         return trainset, validset, testset
@@ -184,7 +192,7 @@ class DataLoaderFactory:
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
-    def plot_images_grid(images, labels, nrow=2, ncol=2):
+    def plot_images_grid(images, labels, nrow=2, ncol=2, path='test.png'):
         fig, axs = plt.subplots(nrow, ncol, figsize=(8, 8))
         axs = axs.flatten()
         for img, lbl, ax in zip(images, labels, axs):
@@ -206,13 +214,13 @@ if __name__ == "__main__":
     images_train, labels_train = next(iter(train_loader))
 
     # Plot the images in a 2x2 grid
-    plot_images_grid(images_train, labels_train, nrow=2, ncol=2)
+    plot_images_grid(images_train, labels_train, nrow=2, ncol=2, path="results/plots/clean.png")
 
     # Get ImageNet-C attack loader (replace 'noise.npy' with the actual noise file you have)
-    imagenetc_attack_loader = factory.get_attack_loader(eval_noise='noise.npy')
+    imagenetc_attack_loader = factory.get_attack_loader(eval_noise='defocus.npy')
 
     # Get a batch of images from ImageNet-C
     images_attack, labels_attack = next(iter(imagenetc_attack_loader))
 
     # Plot the images in a 2x2 grid
-    plot_images_grid(images_attack, labels_attack, nrow=2, ncol=2)
+    plot_images_grid(images_attack, labels_attack, nrow=2, ncol=2, path="results/plots/cleanc.png")
