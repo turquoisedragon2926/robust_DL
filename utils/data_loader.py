@@ -8,7 +8,6 @@ from torch.utils.data import DataLoader, SubsetRandomSampler
 import json
 from PIL import Image
 from torch.utils.data import Dataset
-from robust_DL.losses.noises import NoiseFunctionFactory
 
 class ImageNetKaggle(Dataset):
     def __init__(self, root, split, transform=None, n_classes=10):
