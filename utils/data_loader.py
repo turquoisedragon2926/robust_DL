@@ -135,9 +135,9 @@ class DataLoaderFactory:
         ])
 
         # Load datasets, assuming you have ImageNet dataset in the specified path
-        trainset = datasets.ImageNet(root=os.path.join(self.root, 'imagenette2/train'), split='train', download=True, transform=transform_train)
-        validset = datasets.ImageNet(root=os.path.join(self.root, 'imagenette2/train'), split='train', download=True, transform=transform_train)
-        testset = datasets.ImageNet(root=os.path.join(self.root, 'imagenette2/val'), split='val', download=True, transform=transform_test)
+        trainset = datasets.ImageNet(root=os.path.join(self.root, 'imagenette2/train'), split='train', transform=transform_train)
+        validset = datasets.ImageNet(root=os.path.join(self.root, 'imagenette2/train'), split='train', transform=transform_train)
+        testset = datasets.ImageNet(root=os.path.join(self.root, 'imagenette2/val'), split='val', transform=transform_test)
 
         return trainset, validset, testset
 
