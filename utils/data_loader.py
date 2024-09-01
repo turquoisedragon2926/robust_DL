@@ -37,6 +37,7 @@ class DataLoaderFactory:
         valid_loader = DataLoader(validset, batch_size=self.batch_size, sampler=valid_sampler, num_workers=self.num_workers, pin_memory=self.pin_memory)
         test_loader = DataLoader(testset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers, pin_memory=self.pin_memory)
 
+        print(len(valid_loader))
         return train_loader, valid_loader, test_loader
 
     def get_attack_loader(self, eval_noise):
