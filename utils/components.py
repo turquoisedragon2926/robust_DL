@@ -39,22 +39,25 @@ class AttackDataset(Dataset):
         if self.transform:
             image = self.transform(image)
         return image, label
-
 class ImageNetKaggle(Dataset):
-    def __init__(self, root, split, transform=None, n_classes=10):
+    def __init__(self, root, split, transform=None, n_classes=10, max_samples_per_class=3):
         self.samples = []
         self.targets = []
         self.transform = transform
         self.syn_to_class = {}
         self.n_classes = n_classes
-
+        self.max_samples_per_class = max_samples_per_class
+        
         with open(os.path.join(root, "imagenet_class_index.json"), "rb") as f:
-                    json_file = json.load(f)
-                    for class_id, v in json_file.items():
-                        self.syn_to_class[v[0]] = int(class_id)
+            json_file = json.load(f)
+            for class_id, v in json_file.items():
+                self.syn_to_class[v[0]] = int(class_id)
         with open(os.path.join(root, "ILSVRC2012_val_labels.json"), "rb") as f:
-                    self.val_to_syn = json.load(f)
+            self.val_to_syn = json.load(f)
+
         samples_dir = os.path.join(root, "ILSVRC/Data/CLS-LOC", split)
+        class_sample_counts = {i: 0 for i in range(n_classes)}  
+        
         for entry in os.listdir(samples_dir):
             if split == "train":
                 syn_id = entry
@@ -62,21 +65,28 @@ class ImageNetKaggle(Dataset):
                 if target < self.n_classes:
                     syn_folder = os.path.join(samples_dir, syn_id)
                     for sample in os.listdir(syn_folder):
+                        if self.max_samples_per_class and class_sample_counts[target] >= self.max_samples_per_class:
+                            continue
                         sample_path = os.path.join(syn_folder, sample)
                         self.samples.append(sample_path)
                         self.targets.append(target)
+                        class_sample_counts[target] += 1
             elif split == "val":
                 syn_id = self.val_to_syn[entry]
                 target = self.syn_to_class[syn_id]
                 if target < self.n_classes:
+                    if self.max_samples_per_class and class_sample_counts[target] >= self.max_samples_per_class:
+                        continue
                     sample_path = os.path.join(samples_dir, entry)
                     self.samples.append(sample_path)
                     self.targets.append(target)
+                    class_sample_counts[target] += 1
+
     def __len__(self):
-            return len(self.samples)
+        return len(self.samples)
+
     def __getitem__(self, idx):
-            x = Image.open(self.samples[idx]).convert("RGB")
-            if self.transform:
-                x = self.transform(x)
-            return x, self.targets[idx]
-          
+        x = Image.open(self.samples[idx]).convert("RGB")
+        if self.transform:
+            x = self.transform(x)
+        return x, self.targets[idx]
