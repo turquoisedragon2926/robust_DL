@@ -46,6 +46,8 @@ def train(configuration, args, device):
     if epoch == 1 or epoch % args.eval_interval == 0 or epoch == args.epochs:
       eval_acc = accuracy(configuration, device, valid=True)
       eval_accuracies.append(eval_acc)
+      
+      print(f"Evaluation Accuray: {eval_acc}")
 
       if (eval_acc > best_eval_acc):  # best so far so save checkpoint to restore later
         best_eval_acc = eval_acc
@@ -59,12 +61,12 @@ def train(configuration, args, device):
       else:
           patience_count += 1
 
-    cifar10c_eval_acc = None
+    robust_eval_acc = None
     if epoch == args.epochs or patience_count >= patience:
-        # Get the CIFAR 10 C evaluation accuracy and plot the horizontal line
-        cifar10c_eval_acc = robust_accuracy(configuration, device)
+        # Get the Robust (Corrupted) evaluation accuracy to plot the horizontal line
+        robust_eval_acc = robust_accuracy(configuration, device)
     
-    plotter.plot_loss_accuracy(epoch_losses, eval_accuracies, cifar10c_eval_acc, configuration.id + '.png')
+    plotter.plot_loss_accuracy(epoch_losses, eval_accuracies, robust_eval_acc, configuration.id + '.png')
 
     if patience_count >= patience:
       logger.log(f"Early Stopping!, epoch {epoch}")
