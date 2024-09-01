@@ -101,7 +101,7 @@ class DataLoaderFactory:
         
         eval_noise = eval_noise[:-4] if eval_noise.endswith('.npy') else eval_noise
         
-        testset = ImageNetKaggle(os.path.join(self.root, "imagenetc"), 'eval', transform=transform_imagenetc, noise=eval_noise, max_samples_per_class=n_classes)
+        testset = ImageNetKaggle(os.path.join(self.root, "imagenetc"), 'eval', transform=transform_imagenetc, noise=eval_noise, n_classes=n_classes)
         data_loader = DataLoader(testset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers, pin_memory=self.pin_memory)
 
         return data_loader
@@ -125,9 +125,9 @@ class DataLoaderFactory:
         ])
 
         # Load datasets, assuming you have ImageNet dataset in the specified path
-        trainset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'train', transform=transform_train, max_samples_per_class=n_classes)
-        validset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'train', transform=transform_train, max_samples_per_class=n_classes)
-        testset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'val', transform=transform_test, max_samples_per_class=n_classes)
+        trainset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'train', transform=transform_train, n_classes=n_classes)
+        validset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'train', transform=transform_train, n_classes=n_classes)
+        testset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'val', transform=transform_test, n_classes=n_classes)
 
         return trainset, validset, testset
 
