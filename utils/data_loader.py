@@ -26,6 +26,7 @@ class DataLoaderFactory:
         # Create samplers for validation split
         num_train = len(trainset)
         indices = list(range(num_train))
+        np.random.shuffle(indices)
         split = int(np.floor(self.valid_size * num_train))
 
         train_idx, valid_idx = indices[split:], indices[:split]
