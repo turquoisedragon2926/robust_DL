@@ -42,7 +42,7 @@ bash scripts/plot.sh \
     --model_type resnet18 \
     --loss_type adaptive \
     --train_noise uniform \
-    --eval_noise gaussian_noise.npy \
+    --eval_noise fog \
     --epochs 100 \
     --valid_size 0.2 \
     --eval_interval 1 \
