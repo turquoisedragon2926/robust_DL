@@ -14,7 +14,7 @@ def norm_clamp(logit, tau1, tau2):
 
 def adaptive_loss(model, x_natural, y, train_noise, noise_model, severity, w_noise, tau1, tau2, num_samples=10):
 
-    print(model.shape)
+    print(x_natural.shape, y.shape)
     
     logits = model(x_natural)
     logits = norm_clamp(logits, tau1, tau2)
