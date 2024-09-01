@@ -49,12 +49,12 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     # eval_noises = ["none", "adversarial", "saturate.npy", "gaussian_blur.npy", "speckle_noise.npy", "defocus_blur.npy", "shot_noise.npy", "gaussian_noise.npy"]
-    # severities = [0.05, 0.1, 0.25, 0.5, 0.75, 1.0]
-    # lrs = [0.005, 0.01, 0.03, 0.05]
+    severities = [0.05, 0.1, 0.25, 0.5, 0.75, 1.0]
+    lrs = [0.005, 0.01, 0.03, 0.05]
 
     eval_noises = ["none", "adversarial", "saturate.npy", "spatter.npy", "gaussian_blur.npy", "speckle_noise.npy", "jpeg_compression.npy", "pixelate.npy", "elastic_transform.npy", "contrast.npy", "brightness.npy", "fog.npy", "frost.npy", "snow.npy", "zoom_blur.npy", "motion_blur.npy", "defocus_blur.npy", "impulse_noise.npy", "shot_noise.npy", "gaussian_noise.npy"]
-    severities = [0.05]
-    lrs = [0.05]
+    # severities = [0.05]
+    # lrs = [0.05]
 
     if args.model_type == 'alexnet':
         model = AlexNet().to(device)
