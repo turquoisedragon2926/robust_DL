@@ -49,7 +49,7 @@ def train(configuration, args, device):
       
       print(f"Evaluation Accuray: {eval_acc}")
 
-      if (eval_acc > best_eval_acc):  # best so far so save checkpoint to restore later
+      if (eval_acc >= best_eval_acc):  # best so far so save checkpoint to restore later
         best_eval_acc = eval_acc
         patience_count = 0
 

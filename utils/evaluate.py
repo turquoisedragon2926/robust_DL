@@ -22,6 +22,8 @@ def accuracy(configuration, device, valid=False):
             outputs = configuration.model(data)
             _, predicted = torch.max(outputs, 1)
             total += target.size(0)
+            print(predicted)
+            print(target)
             correct += (predicted == target).sum().item()
 
     return 100. * correct / total
