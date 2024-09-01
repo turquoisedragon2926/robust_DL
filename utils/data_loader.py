@@ -94,18 +94,14 @@ class DataLoaderFactory:
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ])
         
-        testset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'val', transform=transform_imagenetc)
+        eval_noise = eval_noise.rstrip('.npy')
+        
+        testset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'eval', transform=transform_imagenetc, noise=eval_noise, max_samples_per_class=n_classes)
         data_loader = DataLoader(testset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers, pin_memory=self.pin_memory)
 
         return data_loader
 
-        images = np.load(os.path.join('data/imagenet', eval_noise))
-        labels = np.load('data/imagenet/labels.npy')
-        imagenetc_dataset = AttackDataset(data=images, labels=labels, transform=transform_imagenetc)
-        imagenetc_attack_loader = DataLoader(imagenetc_dataset, batch_size=self.batch_size, shuffle=False)
-        return imagenetc_attack_loader
-
-    def get_imagenet_loaders(self):
+    def get_imagenet_loaders(self, n_classes=10):
         # Define transforms for ImageNet
         transform_train = transforms.Compose([
             transforms.RandomResizedCrop(224),
@@ -123,9 +119,9 @@ class DataLoaderFactory:
         ])
 
         # Load datasets, assuming you have ImageNet dataset in the specified path
-        trainset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'train', transform=transform_train)
-        validset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'train', transform=transform_train)
-        testset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'val', transform=transform_test)
+        trainset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'train', transform=transform_train, max_samples_per_class=n_classes)
+        validset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'train', transform=transform_train, max_samples_per_class=n_classes)
+        testset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'val', transform=transform_test, max_samples_per_class=n_classes)
 
         return trainset, validset, testset
 
