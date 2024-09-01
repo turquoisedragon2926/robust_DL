@@ -240,22 +240,17 @@ if __name__ == "__main__":
     # Initialize the DataLoaderFactory
     factory = DataLoaderFactory(root='./data', valid_size=0.1, train_dataset='imagenet', eval_dataset='imagenetC')
 
-    # Get ImageNet loaders
     train_loader, valid_loader, test_loader = factory.get_data_loaders()
-
-    # Get a batch of images from the training set
-    images_train, labels_train = next(iter(train_loader))
-
-    # Plot the images in a 2x2 grid
-    plot_images_grid(images_train, labels_train, nrow=2, ncol=2, path="trainclean.png")
-    plot_images_grid(valid_loader, labels_train, nrow=2, ncol=2, path="validclean.png")
-    plot_images_grid(test_loader, labels_train, nrow=2, ncol=2, path="testclean.png")
-
-    # Get ImageNet-C attack loader (replace 'noise.npy' with the actual noise file you have)
     imagenetc_attack_loader = factory.get_attack_loader(eval_noise='defocus.npy')
 
-    # Get a batch of images from ImageNet-C
-    images_attack, labels_attack = next(iter(imagenetc_attack_loader))
+    images_train, labels_train = next(iter(train_loader))
+    plot_images_grid(images_train, labels_train, nrow=2, ncol=2, path="trainclean.png")
+    
+    images_valid, labels_valid = next(iter(valid_loader))
+    plot_images_grid(images_valid, labels_valid, nrow=2, ncol=2, path="validclean.png")
+    
+    images_test, labels_test = next(iter(test_loader))
+    plot_images_grid(images_test, labels_test, nrow=2, ncol=2, path="testclean.png")
 
-    # Plot the images in a 2x2 grid
+    images_attack, labels_attack = next(iter(imagenetc_attack_loader))
     plot_images_grid(images_attack, labels_attack, nrow=2, ncol=2, path="cleanc.png")
