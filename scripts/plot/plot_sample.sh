@@ -34,7 +34,7 @@
 #     --tau1 10 \
 #     --num_samples 1
 
-base scripts/plot.sh \
+bash scripts/plot.sh \
     --mode_type train \
     --attack_type identity \
     --train_dataset imagenet \
