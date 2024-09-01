@@ -74,7 +74,6 @@ def main():
     data_loader = DataLoaderFactory(root='data', valid_size=args.valid_size, train_dataset=args.train_dataset, eval_dataset=args.eval_dataset)
     train_loader, valid_loader, test_loader = data_loader.get_data_loaders()
 
-    print(len(valid_loader))
     attack_loader = data_loader.get_attack_loader(args.eval_noise)
 
     # Pass these loaders to the Data class

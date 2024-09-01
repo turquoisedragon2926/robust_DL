@@ -40,7 +40,7 @@ class AttackDataset(Dataset):
             image = self.transform(image)
         return image, label
 class ImageNetKaggle(Dataset):
-    def __init__(self, root, split, transform=None, n_classes=10, max_samples_per_class=300):
+    def __init__(self, root, split, transform=None, n_classes=10, max_samples_per_class=None):
         self.samples = []
         self.targets = []
         self.transform = transform

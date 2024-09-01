@@ -11,19 +11,12 @@ def accuracy(configuration, device, valid=False):
 
     data_loader = configuration.data.valid_loader if valid else configuration.data.test_loader
 
-    print("HELLo")
-    
-    print(len(configuration.data.valid_loader))
-    print(len(configuration.data.test_loader))
     with torch.no_grad():
         for batch_idx, (data, target) in enumerate(data_loader):
-            print(f"exploring batch index {batch_idx}")
             data, target = data.to(device), target.to(device)
             outputs = configuration.model(data)
             _, predicted = torch.max(outputs, 1)
             total += target.size(0)
-            print(predicted)
-            print(target)
             correct += (predicted == target).sum().item()
 
     return 100. * correct / total
