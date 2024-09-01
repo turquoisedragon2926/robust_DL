@@ -13,6 +13,7 @@ def accuracy(configuration, device, valid=False):
 
     with torch.no_grad():
         for batch_idx, (data, target) in enumerate(data_loader):
+            print(f"exploring batch index {batch_idx}")
             data, target = data.to(device), target.to(device)
             outputs = configuration.model(data)
             _, predicted = torch.max(outputs, 1)
