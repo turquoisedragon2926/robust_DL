@@ -86,6 +86,11 @@ class DataLoaderFactory:
         return trainset, validset, testset
     
     def get_imagenetC_attack_loader(self, eval_noise, n_classes=10):
+
+        if eval_noise == 'adversarial':
+            _, _, test_loader = self.get_data_loaders()
+            return test_loader
+
         transform_imagenetc = transforms.Compose([
             # TODO: might need different transforms for ImageNet
             transforms.Resize(256),

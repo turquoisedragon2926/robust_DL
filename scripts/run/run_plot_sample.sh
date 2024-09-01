@@ -5,7 +5,7 @@ python3 plotting/adaptive_lr_alpha.py \
     --eval_dataset imagenetC \
     --model_type resnet18 \
     --loss_type adaptive \
-    --train_noise uniforn \
+    --train_noise uniform \
     --eval_noise gaussian_noise.npy \
     --epochs 50 \
     --valid_size 0.2 \
