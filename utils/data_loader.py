@@ -101,7 +101,7 @@ class DataLoaderFactory:
         
         eval_noise = eval_noise.rstrip('.npy')
         
-        testset = ImageNetKaggle(os.path.join(self.root, "imagenet"), 'eval', transform=transform_imagenetc, noise=eval_noise, max_samples_per_class=n_classes)
+        testset = ImageNetKaggle(os.path.join(self.root, "imagenetc"), 'eval', transform=transform_imagenetc, noise=eval_noise, max_samples_per_class=n_classes)
         data_loader = DataLoader(testset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers, pin_memory=self.pin_memory)
 
         return data_loader

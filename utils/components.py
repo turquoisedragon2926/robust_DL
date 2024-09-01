@@ -59,7 +59,7 @@ class ImageNetKaggle(Dataset):
         class_sample_counts = {i: 0 for i in range(n_classes)}  
         
         if split == "eval":
-            samples_dir = os.path.join(root, "imagenetc", noise)
+            samples_dir = os.path.join(root, noise)
         
         for entry in os.listdir(samples_dir):
             if split == "train":
