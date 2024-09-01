@@ -106,6 +106,7 @@ class DataLoaderFactory:
 
         return data_loader
 
+    # https://towardsdatascience.com/downloading-and-using-the-imagenet-dataset-with-pytorch-f0908437c4be
     def get_imagenet_loaders(self, n_classes=10):
         # Define transforms for ImageNet
         transform_train = transforms.Compose([
