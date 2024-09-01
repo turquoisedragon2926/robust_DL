@@ -98,7 +98,7 @@ class DataLoaderFactory:
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ])
         
-        eval_noise = eval_noise.rstrip('.npy')
+        eval_noise = eval_noise[:-4] if eval_noise.endswith('.npy') else eval_noise
         
         testset = ImageNetKaggle(os.path.join(self.root, "imagenetc"), 'eval', transform=transform_imagenetc, noise=eval_noise, max_samples_per_class=n_classes)
         data_loader = DataLoader(testset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers, pin_memory=self.pin_memory)
