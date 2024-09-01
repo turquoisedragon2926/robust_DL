@@ -43,7 +43,7 @@ bash scripts/experiment.sh \
     --loss_type adaptive \
     --train_noise uniform \
     --eval_noise gaussian_noise.npy \
-    --epochs 100 \
+    --epochs 50 \
     --valid_size 0.2 \
     --eval_interval 1 \
     --severity 0.05 \
