@@ -31,7 +31,7 @@ sbatch <<EOT
 #SBATCH --job-name ${mode_type}_${model_type}_${train_dataset}_${eval_dataset}_${loss_type}_${eval_noise}_${epochs}
 #SBATCH --mail-user=richardr2926@gmail.com
 #SBATCH --mail-type=ALL
-#SBATCH --time=05:00:00
+#SBATCH --time=02:00:00
 #SBATCH --account=m3863_g
 #SBATCH --gpu-bind=none
 
