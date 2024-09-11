@@ -12,6 +12,7 @@ from losses.trades import trades_loss
 from losses.ce import ce_loss
 from losses.adaptive import adaptive_loss
 from losses.adversarial import adversarial_loss
+from losses.augmix import augmix_loss
 
 from models.wideresnet import *
 from models.resnet import *
@@ -55,6 +56,12 @@ def general_adaptive_loss_fn(noise_model, train_noise, severity, w_noise, tau1, 
     return adaptive_loss(model, data, target, train_noise, noise_model, severity=severity, w_noise=w_noise, tau1=tau1, tau2=tau2, num_samples=num_samples)
 
   return adaptive_loss_fn
+
+def general_augmix_loss_fn():
+  def augmix_loss_fn(model, data, target, optimizer):
+    return augmix_loss(model, data, target)
+
+  return augmix_loss_fn
 
 def general_ce_loss_fn(train_noise, severity):
   def ce_loss_fn(model, data, target, optimizer):
@@ -112,6 +119,8 @@ def main():
         loss_fn = general_ce_loss_fn(train_noise=args.train_noise, severity=args.severity)
     elif args.loss_type == 'adaptive':
         loss_fn = general_adaptive_loss_fn(noise_model, args.train_noise, args.severity, args.w_noise, args.tau1, args.tau2, args.num_samples)
+    elif args.loss_type == 'augmix':
+        loss_fn = general_augmix_loss_fn()
     else:
         logger.log("Loss Type not supported")
         sys.exit(1)
