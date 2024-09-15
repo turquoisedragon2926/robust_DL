@@ -192,7 +192,7 @@ def aug(image, preprocess, mixture_width=np.random.randint(1, 5), mixture_depth=
   else:
     return single_image_aug(image, preprocess, mixture_width, mixture_depth, aug_severity)
 
-def augmix_loss(model, x_natural, y):
+def augmix_loss_old(model, x_natural, y):
     
     preprocess = transforms.Compose(
       [transforms.Normalize([0.5] * 3, [0.5] * 3)])
@@ -216,7 +216,7 @@ def augmix_loss(model, x_natural, y):
                   F.kl_div(p_mixture, p_aug2, reduction='batchmean')) / 3.
     return loss
 
-def single_image_aug(image, preprocess, mixture_width, mixture_depth, aug_severity):
+def single_image_aug(image, preprocess, mixture_width=np.random.randint(1, 5), mixture_depth=np.random.randint(1, 4), aug_severity=np.random.randint(1, 5)):
     device = image.device
     aug_list = augmentations_all
     ws = torch.tensor(np.float32(np.random.dirichlet([1] * mixture_width)), device=device)
@@ -238,3 +238,22 @@ def single_image_aug(image, preprocess, mixture_width, mixture_depth, aug_severi
 
     mixed = (1 - m) * preprocess(image) + m * mix
     return mixed
+
+def augmix_loss(model, im_tuple, y):
+    images_all = torch.cat(im_tuple, 0).cuda()
+    targets = y.cuda()
+    logits_all = model(images_all)
+    logits_clean, logits_aug1, logits_aug2 = torch.split(
+        logits_all, im_tuple[0].size(0))
+    # Cross-entropy is only computed on clean images
+    loss = F.cross_entropy(logits_clean, targets)
+    p_clean, p_aug1, p_aug2 = F.softmax(
+        logits_clean, dim=1), F.softmax(
+            logits_aug1, dim=1), F.softmax(
+                logits_aug2, dim=1)
+    # Clamp mixture distribution to avoid exploding KL divergence
+    p_mixture = torch.clamp((p_clean + p_aug1 + p_aug2) / 3., 1e-7, 1).log()
+    loss += 12 * (F.kl_div(p_mixture, p_clean, reduction='batchmean') +
+                  F.kl_div(p_mixture, p_aug1, reduction='batchmean') +
+                  F.kl_div(p_mixture, p_aug2, reduction='batchmean')) / 3.
+    return loss

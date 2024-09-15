@@ -3,7 +3,7 @@ import torch
 import numpy as np
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, SubsetRandomSampler
-from .components import AttackDataset, ImageNetKaggle
+from .components import AttackDataset, ImageNetKaggle, AugMixDataset
 
 class DataLoaderFactory:
     def __init__(self, root, valid_size, train_dataset, eval_dataset, batch_size=128, num_workers=1, pin_memory=True):
@@ -18,6 +18,8 @@ class DataLoaderFactory:
     def get_data_loaders(self):
         if self.train_dataset == 'cifar10':
             trainset, validset, testset = self.get_cifar10_loaders()
+        if self.train_dataset == 'augcifar10':
+            trainset, validset, testset = self.get_aug_cifar10_loaders()
         elif self.train_dataset == 'imagenet':
             trainset, validset, testset = self.get_imagenet_loaders()
         else:
@@ -42,6 +44,8 @@ class DataLoaderFactory:
 
     def get_attack_loader(self, eval_noise):
         if self.eval_dataset == 'cifar10C':
+            return self.get_cifar10c_attack_loader(eval_noise)
+        if self.eval_dataset == 'augcifar10C':
             return self.get_cifar10c_attack_loader(eval_noise)
         elif self.eval_dataset == 'imagenetC':
             return self.get_imagenetC_attack_loader(eval_noise)
@@ -85,6 +89,33 @@ class DataLoaderFactory:
 
         return trainset, validset, testset
     
+    def get_aug_cifar10_loaders(self):
+        # Define transforms
+        transform_train = transforms.Compose([
+            transforms.RandomCrop(32, padding=4),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+        ])
+
+        transform_test = transforms.Compose([
+            transforms.ToTensor(),
+        ])
+
+        # Load datasets
+        trainset = datasets.CIFAR10(root=self.root, train=True, download=True, transform=transform_train)
+        validset = datasets.CIFAR10(root=self.root, train=True, download=True, transform=transform_train)
+        testset = datasets.CIFAR10(root=self.root, train=False, download=True, transform=transform_test)
+        
+        preprocess = transforms.Compose(
+        [transforms.ToTensor(),
+        transforms.Normalize([0.5] * 3, [0.5] * 3)])
+        
+        trainset = AugMixDataset(trainset, preprocess, False)
+        validset = AugMixDataset(trainset, preprocess, False)
+        testset = AugMixDataset(trainset, preprocess, False)
+        
+        return trainset, validset, testset
+        
     def get_imagenetC_attack_loader(self, eval_noise, n_classes=10):
 
         if eval_noise == 'adversarial':
