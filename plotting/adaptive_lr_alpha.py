@@ -49,8 +49,8 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     # eval_noises = ["none", "adversarial", "saturate.npy", "gaussian_blur.npy", "speckle_noise.npy", "defocus_blur.npy", "shot_noise.npy", "gaussian_noise.npy"]
-    severities = [0.05, 0.1, 0.25, 0.5, 0.75, 1.0]
-    lrs = [0.005, 0.01, 0.03, 0.05]
+    severities = [0.05] # [0.05, 0.1, 0.25, 0.5, 0.75, 1.0]
+    lrs = [0.03] # [0.005, 0.01, 0.03, 0.05]
 
     eval_noises = ["none", "adversarial", "saturate.npy", "spatter.npy", "gaussian_blur.npy", "speckle_noise.npy", "jpeg_compression.npy", "pixelate.npy", "elastic_transform.npy", "contrast.npy", "brightness.npy", "fog.npy", "frost.npy", "snow.npy", "zoom_blur.npy", "motion_blur.npy", "defocus_blur.npy", "impulse_noise.npy", "shot_noise.npy", "gaussian_noise.npy"]
     # severities = [0.05]
@@ -142,13 +142,13 @@ def main():
 
         configuration.id = get_config_id(args, disclude=['eval_noise'])
 
-        plotter.plot_severity_vs_robustness(severities, natural_accuracies, robustness_accuracies, lr, plot_name=f"{configuration.id}_severity_adaptive.png")
-        plotter.plot_eval_noise_bar_chart(eval_noises, severity_accuracies, lr, plot_name=f"{configuration.id}_noise_adaptive.png")
+        plotter.plot_severity_vs_robustness(severities, natural_accuracies, robustness_accuracies, lr, plot_name=f"{configuration.id}_severity_augmix.png")
+        plotter.plot_eval_noise_bar_chart(eval_noises, severity_accuracies, lr, plot_name=f"{configuration.id}_noise_augmix.png")
     
-    plotter.plot_combined_severity_vs_robustness(severities, total_robustness_accuracies, lrs, plot_name=f"{configuration.id}_combined_adaptive.png")
-    plotter.plot_combined_severity_vs_robustness(severities, total_natural_accuracies, lrs, plot_name=f"{configuration.id}_combined_adaptive.png", robust=False)
+    plotter.plot_combined_severity_vs_robustness(severities, total_robustness_accuracies, lrs, plot_name=f"{configuration.id}_combined_augmix.png")
+    plotter.plot_combined_severity_vs_robustness(severities, total_natural_accuracies, lrs, plot_name=f"{configuration.id}_combined_augmix.png", robust=False)
 
-    plotter.plot_tradeoff(severities, total_natural_accuracies, total_robustness_accuracies, plot_name=f"{configuration.id}_tradeoff_adaptive.png")
+    plotter.plot_tradeoff(severities, total_natural_accuracies, total_robustness_accuracies, plot_name=f"{configuration.id}_tradeoff_augmix.png")
 
 if __name__ == "__main__":
     main()
