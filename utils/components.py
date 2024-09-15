@@ -123,7 +123,7 @@ class AugMixDataset(torch.utils.data.Dataset):
     else:
       im_tuple = (self.preprocess(x), single_image_aug(x, self.preprocess),
                   single_image_aug(x, self.preprocess))
-      return im_tuple, y
+      return torch.cat(im_tuple, 0), y
 
   def __len__(self):
     return len(self.dataset)
