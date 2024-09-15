@@ -198,12 +198,9 @@ def augmix_loss(model, x_natural, y):
       [transforms.Normalize([0.5] * 3, [0.5] * 3)])
 
     im_tuple = (preprocess(x_natural), aug(x_natural, preprocess), aug(x_natural, preprocess))
-    print(preprocess(x_natural).shape)
-    print(aug(x_natural, preprocess).shape)
-    print(x_natural.shape)
     images_all = torch.cat(im_tuple, 0).cuda()
-    print(images_all.shape)
     targets = y.cuda()
+    print(targets.shape)
     logits_all = model(images_all)
     logits_clean, logits_aug1, logits_aug2 = torch.split(
         logits_all, im_tuple[0].size(0))
