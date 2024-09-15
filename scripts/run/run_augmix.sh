@@ -6,7 +6,7 @@ python3 main.py \
     --eval_dataset cifar10C \
     --loss_type augmix \
     --eval_noise gaussian_noise.npy \
-    --epochs 1 \
+    --epochs 100 \
     --lr 0.03 \
     --valid_size 0.2 \
-    --eval_interval 1 \
+    --eval_interval 20 \
