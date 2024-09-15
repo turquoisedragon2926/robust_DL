@@ -126,7 +126,7 @@ class AugMixDataset(torch.utils.data.Dataset):
             single_image_aug(x, self.preprocess),
             single_image_aug(x, self.preprocess)
       )
-    print(f"Loading Data Point {i}, {self.preprocess(x).shape}, {single_image_aug(x, self.preprocess).shape}") 
+    print(f"Loading Data Point {i}")
     return torch.cat(im_tuple, 0), y
 
   def __len__(self):

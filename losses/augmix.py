@@ -266,13 +266,11 @@ def single_image_aug(image, preprocess, mixture_width=np.random.randint(1, 5), m
         mix += ws[i] * preprocess(image_aug)
 
     mixed = (1 - m) * preprocess(image) + m * mix
-    print(mixed.shape)
     return mixed
 
 def augmix_loss(model, im_tuple, y):
-    images_all = torch.cat(im_tuple, 0).cuda()
     targets = y.cuda()
-    logits_all = model(images_all)
+    logits_all = model(im_tuple)
     logits_clean, logits_aug1, logits_aug2 = torch.split(
         logits_all, im_tuple[0].size(0))
     # Cross-entropy is only computed on clean images
