@@ -270,6 +270,7 @@ def single_image_aug(image, preprocess, mixture_width=np.random.randint(1, 5), m
 
 def augmix_loss(model, im_tuple, y):
     images_all = torch.cat(im_tuple, 0).cuda()
+    print(images_all.shape)
     targets = y.cuda()
     logits_all = model(images_all)
     logits_clean, logits_aug1, logits_aug2 = torch.split(
