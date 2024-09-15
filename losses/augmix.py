@@ -192,7 +192,7 @@ def aug(image, preprocess, mixture_width=np.random.randint(1, 5), mixture_depth=
   else:
     return single_image_aug(image, preprocess, mixture_width, mixture_depth, aug_severity)
 
-def augmix_loss_old(model, x_natural, y):
+def augmix_loss(model, x_natural, y):
     preprocess = transforms.Compose(
       [transforms.Normalize([0.5] * 3, [0.5] * 3)])
 
@@ -268,7 +268,7 @@ def single_image_aug(image, preprocess, mixture_width=np.random.randint(1, 5), m
     mixed = (1 - m) * preprocess(image) + m * mix
     return mixed
 
-def augmix_loss(model, im_tuple, y):
+def augmix_loss_old(model, im_tuple, y):
     images_all = torch.cat(im_tuple, 0).cuda()
     targets = y.cuda()
     logits_all = model(images_all)
