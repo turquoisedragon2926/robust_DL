@@ -186,8 +186,7 @@ def aug(image, preprocess, mixture_width=np.random.randint(1, 5), mixture_depth=
 def augmix_loss(model, x_natural, y):
     
     preprocess = transforms.Compose(
-      [transforms.ToTensor(),
-       transforms.Normalize([0.5] * 3, [0.5] * 3)])
+      [transforms.Normalize([0.5] * 3, [0.5] * 3)])
 
     im_tuple = (preprocess(x_natural), aug(x_natural, preprocess), aug(x_natural, preprocess))
     images_all = torch.cat(im_tuple, 0).cuda()
