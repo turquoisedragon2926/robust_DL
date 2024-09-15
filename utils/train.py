@@ -29,7 +29,10 @@ def train(configuration, args, device):
     start_time = time.time()
 
     for batch_idx, (data, target) in enumerate(data_loader):
-        data, target = data.to(device), target.to(device)
+        try:
+          data, target = data.to(device), target.to(device)
+        except:
+          data, target = data, target
         configuration.optimizer.zero_grad()
         l = configuration.loss_fn(configuration.model, data, target, configuration.optimizer)
         l.backward()
