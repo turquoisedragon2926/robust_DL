@@ -233,8 +233,8 @@ def single_image_aug(image, preprocess, mixture_width, mixture_depth, aug_severi
             op = np.random.choice(aug_list)
             image_aug = op(image_aug, aug_severity)
 
-        image_aug = pil_to_tensor(image_aug) if isinstance(image_aug, Image.Image) else image_aug
+        image_aug = pil_to_tensor(image_aug).to(device) if isinstance(image_aug, Image.Image) else image_aug
         mix += ws[i] * preprocess(image_aug)
 
-    mixed = (1 - m) * preprocess(image).to(device) + m * mix
+    mixed = (1 - m) * preprocess(image) + m * mix
     return mixed
