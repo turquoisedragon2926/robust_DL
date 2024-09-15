@@ -109,8 +109,8 @@ class DataLoaderFactory:
         preprocess = transforms.Compose([transforms.Normalize([0.5] * 3, [0.5] * 3)])
         
         trainset = AugMixDataset(trainset, preprocess, False)
-        validset = AugMixDataset(trainset, preprocess, False)
-        testset = AugMixDataset(trainset, preprocess, False)
+        validset = AugMixDataset(validset, preprocess, False)
+        testset = AugMixDataset(testset, preprocess, False)
         
         return trainset, validset, testset
         
