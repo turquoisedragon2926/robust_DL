@@ -156,12 +156,19 @@ augmentations_all = [
 
 # Convert tensor to PIL Image
 def tensor_to_pil(img_tensor):
-    if isinstance(img_tensor, torch.Tensor):
+    # Check if there is a batch dimension (shape: [B, C, H, W])
+    if len(img_tensor.shape) == 4:
+        # Process each image in the batch individually
+        pil_images = []
+        for img in img_tensor:
+            pil_images.append(tensor_to_pil(img))  # Recursively handle each image in the batch
+        return pil_images
+    elif isinstance(img_tensor, torch.Tensor):
+        # Handle single image tensor
         img_tensor = img_tensor.mul(255).byte()
-        print(img_tensor.shape)
         img_tensor = img_tensor.permute(1, 2, 0)
         return Image.fromarray(img_tensor.cpu().numpy())
-    return img_tensor
+    return img_tensor  # Return as-is if it's not a tensor
 
 # Convert PIL Image to tensor
 def pil_to_tensor(pil_img):
@@ -177,28 +184,13 @@ def aug(image, preprocess, mixture_width=np.random.randint(1, 5), mixture_depth=
   Returns:
     mixed: Augmented and mixed image.
   """
-  aug_list = augmentations_all
-
-  ws = np.float32(np.random.dirichlet([1] * mixture_width))
-  m = np.float32(np.random.beta(1, 1))
-
-  mix = torch.zeros_like(preprocess(image))
-  for i in range(mixture_width):
-    image_aug = image.clone()
-    depth = mixture_depth if mixture_depth > 0 else np.random.randint(
-        1, 4)
-    
-    image_aug = tensor_to_pil(image_aug) if isinstance(image_aug, torch.Tensor) else image_aug
-    for _ in range(depth):
-      op = np.random.choice(aug_list)
-      image_aug = op(image_aug, aug_severity)
-    # Preprocessing commutes since all coefficients are convex
-
-    image_aug = pil_to_tensor(image_aug) if isinstance(image_aug, Image.Image) else image_aug
-    mix += ws[i] * preprocess(image_aug)
-
-  mixed = (1 - m) * preprocess(image) + m * mix
-  return mixed
+  if len(image.shape) == 4:  # Check if the input has a batch dimension [B, C, H, W]
+    mixed_batch = []
+    for img in image:
+        mixed_batch.append(single_image_aug(img, preprocess, mixture_width, mixture_depth, aug_severity))
+    return torch.stack(mixed_batch)  # Return a batch of mixed images
+  else:
+    return single_image_aug(image, preprocess, mixture_width, mixture_depth, aug_severity)
 
 def augmix_loss(model, x_natural, y):
     
@@ -223,3 +215,26 @@ def augmix_loss(model, x_natural, y):
                   F.kl_div(p_mixture, p_aug1, reduction='batchmean') +
                   F.kl_div(p_mixture, p_aug2, reduction='batchmean')) / 3.
     return loss
+
+def single_image_aug(image, preprocess, mixture_width, mixture_depth, aug_severity):
+    aug_list = augmentations_all
+    ws = np.float32(np.random.dirichlet([1] * mixture_width))
+    m = np.float32(np.random.beta(1, 1))
+
+    mix = torch.zeros_like(preprocess(image))
+    for i in range(mixture_width):
+        image_aug = image.clone() if isinstance(image, torch.Tensor) else image.copy()
+        
+        image_aug = tensor_to_pil(image_aug) if isinstance(image_aug, torch.Tensor) else image_aug
+
+        depth = mixture_depth if mixture_depth > 0 else np.random.randint(1, 4)
+        for _ in range(depth):
+            op = np.random.choice(aug_list)
+            image_aug = op(image_aug, aug_severity)
+
+        image_aug = pil_to_tensor(image_aug) if isinstance(image_aug, Image.Image) else image_aug
+
+        mix += ws[i] * preprocess(image_aug)
+
+    mixed = (1 - m) * preprocess(image) + m * mix
+    return mixed
