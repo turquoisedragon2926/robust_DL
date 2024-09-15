@@ -164,7 +164,7 @@ def aug(image, preprocess, mixture_width=np.random.randint(1, 5), mixture_depth=
   Returns:
     mixed: Augmented and mixed image.
   """
-  aug_list = augmentations.augmentations_all
+  aug_list = augmentations_all
 
   ws = np.float32(np.random.dirichlet([1] * mixture_width))
   m = np.float32(np.random.beta(1, 1))
