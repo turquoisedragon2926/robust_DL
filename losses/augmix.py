@@ -236,5 +236,5 @@ def single_image_aug(image, preprocess, mixture_width, mixture_depth, aug_severi
         image_aug = pil_to_tensor(image_aug) if isinstance(image_aug, Image.Image) else image_aug
         mix += ws[i] * preprocess(image_aug)
 
-    mixed = (1 - m) * preprocess(image) + m * mix
+    mixed = (1 - m) * preprocess(image).to(device) + m * mix
     return mixed
