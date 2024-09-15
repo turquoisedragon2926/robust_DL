@@ -171,7 +171,7 @@ def aug(image, preprocess, mixture_width=np.random.randint(1, 5), mixture_depth=
 
   mix = torch.zeros_like(preprocess(image))
   for i in range(mixture_width):
-    image_aug = image.copy()
+    image_aug = image.clone()
     depth = mixture_depth if mixture_depth > 0 else np.random.randint(
         1, 4)
     for _ in range(depth):
