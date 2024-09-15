@@ -217,9 +217,10 @@ def augmix_loss(model, x_natural, y):
     return loss
 
 def single_image_aug(image, preprocess, mixture_width, mixture_depth, aug_severity):
+    device = image.device
     aug_list = augmentations_all
-    ws = np.float32(np.random.dirichlet([1] * mixture_width))
-    m = np.float32(np.random.beta(1, 1))
+    ws = torch.tensor(np.float32(np.random.dirichlet([1] * mixture_width)), device=device)
+    m = torch.tensor(np.float32(np.random.beta(1, 1)), device=device)
 
     mix = torch.zeros_like(preprocess(image))
     for i in range(mixture_width):
@@ -233,9 +234,7 @@ def single_image_aug(image, preprocess, mixture_width, mixture_depth, aug_severi
             image_aug = op(image_aug, aug_severity)
 
         image_aug = pil_to_tensor(image_aug) if isinstance(image_aug, Image.Image) else image_aug
-        device = image.device
-        print(device)
-        mix += ws[i].to(device) * preprocess(image_aug)
+        mix += ws[i] * preprocess(image_aug)
 
     mixed = (1 - m) * preprocess(image) + m * mix
     return mixed
