@@ -158,6 +158,7 @@ augmentations_all = [
 def tensor_to_pil(img_tensor):
     if isinstance(img_tensor, torch.Tensor):
         img_tensor = img_tensor.mul(255).byte()
+        print(img_tensor.shape)
         img_tensor = img_tensor.permute(1, 2, 0)
         return Image.fromarray(img_tensor.cpu().numpy())
     return img_tensor
