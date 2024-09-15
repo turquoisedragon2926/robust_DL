@@ -154,6 +154,18 @@ augmentations_all = [
     translate_x, translate_y, color, contrast, brightness, sharpness
 ]
 
+# Convert tensor to PIL Image
+def tensor_to_pil(img_tensor):
+    if isinstance(img_tensor, torch.Tensor):
+        img_tensor = img_tensor.mul(255).byte()
+        img_tensor = img_tensor.permute(1, 2, 0)
+        return Image.fromarray(img_tensor.cpu().numpy())
+    return img_tensor
+
+# Convert PIL Image to tensor
+def pil_to_tensor(pil_img):
+    return transforms.ToTensor()(pil_img)
+  
 def aug(image, preprocess, mixture_width=np.random.randint(1, 5), mixture_depth=np.random.randint(1, 4), aug_severity=np.random.randint(1, 5)):
   """Perform AugMix augmentations and compute mixture.
 
@@ -174,10 +186,14 @@ def aug(image, preprocess, mixture_width=np.random.randint(1, 5), mixture_depth=
     image_aug = image.clone()
     depth = mixture_depth if mixture_depth > 0 else np.random.randint(
         1, 4)
+    
+    image_aug = tensor_to_pil(image_aug) if isinstance(image_aug, torch.Tensor) else image_aug
     for _ in range(depth):
       op = np.random.choice(aug_list)
       image_aug = op(image_aug, aug_severity)
     # Preprocessing commutes since all coefficients are convex
+
+    image_aug = pil_to_tensor(image_aug) if isinstance(image_aug, Image.Image) else image_aug
     mix += ws[i] * preprocess(image_aug)
 
   mixed = (1 - m) * preprocess(image) + m * mix
