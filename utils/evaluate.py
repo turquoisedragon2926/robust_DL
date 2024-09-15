@@ -13,7 +13,10 @@ def accuracy(configuration, device, valid=False):
 
     with torch.no_grad():
         for batch_idx, (data, target) in enumerate(data_loader):
-            data, target = data.to(device), target.to(device)
+            try:
+                data, target = data.to(device), target.to(device)
+            except:
+                data, target = data, target
             outputs = configuration.model(data)
             _, predicted = torch.max(outputs, 1)
             total += target.size(0)
