@@ -2,7 +2,7 @@ python3 main.py \
     --mode_type train \
     --attack_type identity \
     --model_type resnet18 \
-    --train_dataset cifar10 \
+    --train_dataset augcifar10 \
     --eval_dataset cifar10C \
     --loss_type augmix \
     --eval_noise gaussian_noise.npy \
