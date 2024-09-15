@@ -266,6 +266,7 @@ def single_image_aug(image, preprocess, mixture_width=np.random.randint(1, 5), m
         mix += ws[i] * preprocess(image_aug)
 
     mixed = (1 - m) * preprocess(image) + m * mix
+    print(mixed.shape)
     return mixed
 
 def augmix_loss(model, im_tuple, y):
