@@ -193,14 +193,14 @@ def aug(image, preprocess, mixture_width=np.random.randint(1, 5), mixture_depth=
     return single_image_aug(image, preprocess, mixture_width, mixture_depth, aug_severity)
 
 def augmix_loss(model, x_natural, y):
-    
+    print(x_natural.shape)
     preprocess = transforms.Compose(
       [transforms.Normalize([0.5] * 3, [0.5] * 3)])
 
     im_tuple = (preprocess(x_natural), aug(x_natural, preprocess), aug(x_natural, preprocess))
     images_all = torch.cat(im_tuple, 0).cuda()
     targets = y.cuda()
-    print(targets.shape)
+
     logits_all = model(images_all)
     logits_clean, logits_aug1, logits_aug2 = torch.split(
         logits_all, im_tuple[0].size(0))
