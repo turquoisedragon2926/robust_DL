@@ -16,10 +16,9 @@ class DataLoaderFactory:
         self.pin_memory = pin_memory
 
     def get_data_loaders(self):
-        print(self.train_dataset)
         if self.train_dataset == 'cifar10':
             trainset, validset, testset = self.get_cifar10_loaders()
-        if self.train_dataset == 'augcifar10':
+        elif self.train_dataset == 'augcifar10':
             trainset, validset, testset = self.get_aug_cifar10_loaders()
         elif self.train_dataset == 'imagenet':
             trainset, validset, testset = self.get_imagenet_loaders()
