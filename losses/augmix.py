@@ -202,6 +202,7 @@ def augmix_loss(model, x_natural, y):
     print(aug(x_natural, preprocess).shape)
     print(x_natural.shape)
     images_all = torch.cat(im_tuple, 0).cuda()
+    print(images_all.shape)
     targets = y.cuda()
     logits_all = model(images_all)
     logits_clean, logits_aug1, logits_aug2 = torch.split(
