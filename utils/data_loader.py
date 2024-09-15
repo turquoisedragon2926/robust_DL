@@ -106,9 +106,7 @@ class DataLoaderFactory:
         validset = datasets.CIFAR10(root=self.root, train=True, download=True, transform=transform_train)
         testset = datasets.CIFAR10(root=self.root, train=False, download=True, transform=transform_test)
         
-        preprocess = transforms.Compose(
-        [transforms.ToTensor(),
-        transforms.Normalize([0.5] * 3, [0.5] * 3)])
+        preprocess = transforms.Compose([transforms.Normalize([0.5] * 3, [0.5] * 3)])
         
         trainset = AugMixDataset(trainset, preprocess, False)
         validset = AugMixDataset(trainset, preprocess, False)

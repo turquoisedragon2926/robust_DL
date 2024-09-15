@@ -4,7 +4,7 @@ from PIL import Image
 from torch.utils.data import Dataset
 import os
 import torch
-from losses.augmix import single_image_aug
+from losses.augmix import data_aug
 
 class Data:
   def __init__(self, train_loader, valid_loader, test_loader, attack_loader):
@@ -119,10 +119,10 @@ class AugMixDataset(torch.utils.data.Dataset):
   def __getitem__(self, i):
     x, y = self.dataset[i]
     if self.no_jsd:
-      return single_image_aug(x, self.preprocess), y
+      return data_aug(x, self.preprocess), y
     else:
-      im_tuple = (self.preprocess(x), single_image_aug(x, self.preprocess),
-                  single_image_aug(x, self.preprocess))
+      im_tuple = (self.preprocess(x), data_aug(x, self.preprocess),
+                  data_aug(x, self.preprocess))
       return im_tuple, y
 
   def __len__(self):
