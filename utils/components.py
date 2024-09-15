@@ -121,8 +121,14 @@ class AugMixDataset(torch.utils.data.Dataset):
     if self.no_jsd:
       return single_image_aug(x, self.preprocess), y
     else:
-      im_tuple = (self.preprocess(x), single_image_aug(x, self.preprocess),
-                  single_image_aug(x, self.preprocess))
+      im_tuple = (
+            torch.tensor(self.preprocess(x)), 
+            torch.tensor(single_image_aug(x, self.preprocess)),
+            torch.tensor(single_image_aug(x, self.preprocess))
+        )
+      for im in im_tuple:
+        print(type(im)) 
+
       return torch.cat(im_tuple, 0), y
 
   def __len__(self):
