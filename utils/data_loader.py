@@ -95,8 +95,8 @@ class DataLoaderFactory:
             transforms.ToTensor(),
             transforms.Normalize((0.5,), (0.5,))])
 
-        images = np.load(os.path.join('data/CIFAR-10-C', eval_noise))
-        labels = np.load('data/CIFAR-10-C/labels.npy')
+        images = np.load(os.path.join('data/CIFAR-100-C', eval_noise))
+        labels = np.load('data/CIFAR-100-C/labels.npy')
         cifar10c_dataset = AttackDataset(
             data=images, labels=labels, transform=transform_cifar10c)
         cifar10c_attack_loader = DataLoader(

@@ -38,8 +38,8 @@ python3 plotting/adaptive_lr_alpha.py \
     --mode_type train \
     --attack_type identity \
     --model_type resnet18 \
-    --train_dataset cifar10 \
-    --eval_dataset cifar10C \
+    --train_dataset cifar100 \
+    --eval_dataset cifar100C \
     --loss_type augmix \
     --eval_noise gaussian_noise.npy \
     --epochs 80 \
